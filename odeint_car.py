@@ -1,15 +1,17 @@
 import numpy as np
 from scipy.integrate import odeint
-import pylab as pl
+import matplotlib.pylab as pl
 import random
 
 state_input = []
+delta_const = 0
+v_const = 3
 
 def getIp():
-    delta_array = [-30,0,30]
-    delta_idx = random.randint(0,2)
-    v = 3
-    delta = delta_array[delta_idx]*np.pi/180
+    # delta_array = [-30,0,30]
+    # delta_idx = random.randint(0,2)
+    v = v_const
+    delta = delta_const*np.pi/180
     x = [v,delta]
     return x
 
@@ -38,7 +40,7 @@ def func1(vars,time):
     state_input.append([time,vars[0],vars[1],vars[2],v,delta])
     return [dx,dy,dtheta]
 
-timeGrid = np.arange(0,1,0.01)
+timeGrid = np.arange(0,100,0.01)
 # ip = np.zeros((len(timeGrid)))
 
 #ip[300:600] = 5.0
@@ -47,12 +49,19 @@ fR = odeint(func1,initR,timeGrid)
 print(state_input)
 j = 0
 with open('data','w+') as file:
-    for line in state_input:
-        for i in line:
-            file.write(str(i)+" ")
-        file.write("\n")        
-
-state_input = np.array(state_input)
+    # for line in state_input:
+    #     for i in line:
+    #         file.write(str(i)+" ")
+    #     file,write(str(30))
+    #     file.write("\n")        
+    for i in range(np.shape(fR)[0]):
+        file.write(str(timeGrid[i])+" ")
+        for j in range(np.shape(fR)[1]):
+            file.write(str(fR[i,j])+" ")
+        file.write(str(v_const)+" ")
+        file.write(str(delta_const)+"\n")
+        
+state_input_arr = np.array(state_input)
 
 pl.figure()
 # pl.plot(timeGrid,ip,'k-',label='ip')
@@ -64,9 +73,9 @@ pl.legend()
 # pl.show(block=False)
 pl.show()
 
-pl.figure()
-pl.plot(fR[:,0],fR[:,1],'r-',label='y')
-pl.plot(state_input[:,1],state_input[:,2],'b-',label='y')
-pl.legend()
-pl.show(block=False)
-pl.show()
+# pl.figure()
+# pl.plot(fR[:,0],fR[:,1],'r-',label='y')
+# pl.plot(state_input[:,1],state_input[:,2],'b-',label='y')
+# pl.legend()
+# pl.show(block=False)
+# pl.show()

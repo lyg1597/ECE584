@@ -5,10 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Python: Car model",
             "type": "python",
             "request": "launch",
             "program": "D:/1_Study/2_ECE584/project/odeint_car.py"
+        },
+        {
+            "name": "Python: nn",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/2_ECE584/project/nn_test.py"
         },
         {
             "name": "Python: Attach",

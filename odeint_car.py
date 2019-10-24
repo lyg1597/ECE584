@@ -1,11 +1,13 @@
 import numpy as np
 from scipy.integrate import odeint
-import matplotlib.pylab as pl
+# import matplotlib.pylab as pl
 import random
 
 state_input = []
-delta_const = 0
+fn = "data_neg30"
+delta_const = -30
 v_const = 3
+time_horizon = 10000
 
 def getIp():
     # delta_array = [-30,0,30]
@@ -40,15 +42,15 @@ def func1(vars,time):
     state_input.append([time,vars[0],vars[1],vars[2],v,delta])
     return [dx,dy,dtheta]
 
-timeGrid = np.arange(0,100,0.01)
+timeGrid = np.arange(0,time_horizon,0.01)
 # ip = np.zeros((len(timeGrid)))
 
 #ip[300:600] = 5.0
 initR = [0,0,0]
 fR = odeint(func1,initR,timeGrid)
-print(state_input)
+# print(state_input)
 j = 0
-with open('data','w+') as file:
+with open(fn,'w+') as file:
     # for line in state_input:
     #     for i in line:
     #         file.write(str(i)+" ")
@@ -63,19 +65,4 @@ with open('data','w+') as file:
         
 state_input_arr = np.array(state_input)
 
-pl.figure()
-# pl.plot(timeGrid,ip,'k-',label='ip')
-pl.plot(timeGrid,fR[:,0],'b-',label='x')
-pl.plot(timeGrid,fR[:,1],'r-',label='y')
-pl.plot(timeGrid,fR[:,2]*np.pi/180,'g-',label='theta')
 
-pl.legend()
-# pl.show(block=False)
-pl.show()
-
-# pl.figure()
-# pl.plot(fR[:,0],fR[:,1],'r-',label='y')
-# pl.plot(state_input[:,1],state_input[:,2],'b-',label='y')
-# pl.legend()
-# pl.show(block=False)
-# pl.show()

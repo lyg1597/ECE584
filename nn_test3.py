@@ -89,7 +89,7 @@ data = data_straight+data_pos30+data_neg30
 input_data = input_straight+input_pos30+input_neg30
 output_data = output_straight+output_pos30+output_neg30
 
-with open('input_data','w+') as fd:
+with open('input_data.dat','w+') as fd:
     for line in input_data:
         fd.write(str(line[0]))
         fd.write(' ')
@@ -98,7 +98,7 @@ with open('input_data','w+') as fd:
         fd.write(str(line[2]))
         fd.write('\n')
 
-with open('output_data','w+') as fd:
+with open('output_data.dat','w+') as fd:
     for line in output_data:
         fd.write(str(line[0]))
         # fd.write(' ')

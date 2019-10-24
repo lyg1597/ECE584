@@ -50,7 +50,7 @@ initR = [0,0,0]
 fR = odeint(func1,initR,timeGrid)
 # print(state_input)
 j = 0
-with open(fn,'w+') as file:
+with open(fn+".dat",'w+') as file:
     # for line in state_input:
     #     for i in line:
     #         file.write(str(i)+" ")

@@ -14,13 +14,19 @@
             "name": "Python: nn",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/nn_test.py"
+            "program": "D:/1_Study/2_ECE584/project/nn_test3.py"
         },
         {
-            "name": "Python: nn3",
+            "name": "Python: nn_y",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/nn_test3.py"
+            "program": "D:/1_Study/2_ECE584/project/nn_test_y.py"
+        },
+        {
+            "name": "Python: nn_y_visualize",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/2_ECE584/project/nn_y_visualize.py"
         }
     ]
 }

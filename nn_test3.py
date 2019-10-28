@@ -1,163 +1,197 @@
 # -*- coding: utf-8 -*-
 import torch
 import numpy as np
+import matplotlib.pyplot as plt
 
 class TwoLayerNet(torch.nn.Module):
-    def __init__(self,D_in,H1,H2, D_out):
+    def __init__(self, D_in, H1,H2, D_out):
+        """
+        In the constructor we instantiate two nn.Linear modules and assign them as
+        member variables.
+        """
         super(TwoLayerNet, self).__init__()
         self.linear1 = torch.nn.Linear(D_in, H1)
-        self.linear2 = torch.nn.Linear(H1, D_out)
-        # self.linear3 = torch.nn.Linear(H2, D_out)
+        self.linear2 = torch.nn.Linear(H1, H2)
+        self.linear3 = torch.nn.Linear(H2, D_out)
 
-    def forward(self,x):
-        h1 = torch.nn.functional.relu(self.linear1(x))
-        # h2 = torch.nn.functional.relu(self.linear2(h1))
-        y = self.linear2(h1)
-        return y
+    def forward(self, x):
+        """
+        In the forward function we accept a Tensor of input data and we must return
+        a Tensor of output data. We can use Modules defined in the constructor as
+        well as arbitrary operators on Tensors.
+        """
+        y1 = torch.nn.functional.relu(self.linear1(x))
+        y2 = torch.nn.functional.relu(self.linear2(y1))
+        y_pred = self.linear3(y2)
+        return y_pred
 
+device = torch.device("cuda")
+# N is batch size; D_in is input dimension;
+# H is hidden dimension; D_out is output dimension.
+D_in, H1,H2, D_out =1, 100,100, 1
 
-delta_t = 0.01
+# Create random Tensors to hold inputs and outputs
+x = np.arange(0,20,0.001)
+y = np.sin(x)
 
-#############################
-data_straight = []
-with open("data_straight") as file:
-    line = file.readline()
-    while line:
-        line = line.split(' ')
-        line = [float(i) for i in line]
-        data_straight.append(line)
-        line = file.readline()
+x_li = []
+y_li = []
+for i in range(len(x)):
+    x_li.append([x[i]])
+    y_li.append([y[i]])
+    
 
-input_straight = []
-for i in range(0,len(data_straight)-1):
-    input_straight.append([data_straight[i][3]%int(360),data_straight[i][4],data_straight[i][5]])
+x = torch.FloatTensor(x_li)
+y = torch.FloatTensor(y_li)
 
-output_straight = []
-for i in range(1,len(data_straight)):
-    temp = []
-    temp.append((data_straight[i][1]-data_straight[i-1][1])/delta_t)
-    temp.append((data_straight[i][2]-data_straight[i-1][2])/delta_t)
-    temp.append(((data_straight[i][3]-data_straight[i-1][3])/delta_t)%int(360))
-    output_straight.append(temp)
+x = x.to(device)
+y = y.to(device)
 
-#############################
-data_pos30 = []
-with open("data_pos30") as file:
-    line = file.readline()
-    while line:
-        line = line.split(' ')
-        line = [float(i) for i in line]
-        data_pos30.append(line)
-        line = file.readline()
-
-input_pos30 = []
-for i in range(0,len(data_pos30)-1):
-    input_pos30.append([data_pos30[i][3]%int(360),data_pos30[i][4],data_pos30[i][5]])
-
-output_pos30 = []
-for i in range(1,len(data_pos30)):
-    temp = []
-    # temp.append((data_pos30[i][1]-data_pos30[i-1][1])/delta_t)
-    # temp.append((data_pos30[i][2]-data_pos30[i-1][2])/delta_t)
-    temp.append(((data_pos30[i][3]-data_pos30[i-1][3])/delta_t)%int(360))
-    output_pos30.append(temp)
-
-#############################
-data_neg30 = []
-with open("data_neg30") as file:
-    line = file.readline()
-    while line:
-        line = line.split(' ')
-        line = [float(i) for i in line]
-        data_neg30.append(line)
-        line = file.readline()
-
-input_neg30 = []
-for i in range(0,len(data_neg30)-1):
-    input_neg30.append([data_neg30[i][3]%int(360),data_neg30[i][4],data_neg30[i][5]])
-
-output_neg30 = []
-for i in range(1,len(data_neg30)):
-    temp = []
-    temp.append((data_neg30[i][1]-data_neg30[i-1][1])/delta_t)
-    temp.append((data_neg30[i][2]-data_neg30[i-1][2])/delta_t)
-    temp.append(((data_neg30[i][3]-data_neg30[i-1][3])/delta_t)%int(360))
-    output_neg30.append(temp)
-
-#############################
-data = data_straight+data_pos30+data_neg30
-input_data = input_straight+input_pos30+input_neg30
-output_data = output_straight+output_pos30+output_neg30
-
-with open('input_data.dat','w+') as fd:
-    for line in input_data:
-        fd.write(str(line[0]))
-        fd.write(' ')
-        fd.write(str(line[1]))
-        fd.write(' ')
-        fd.write(str(line[2]))
-        fd.write('\n')
-
-with open('output_data.dat','w+') as fd:
-    for line in output_data:
-        fd.write(str(line[0]))
-        # fd.write(' ')
-        # fd.write(str(line[1]))
-        # fd.write(' ')
-        # fd.write(str(line[2]))
-        fd.write('\n')
-
-device = torch.device('cuda')
-
-data = torch.FloatTensor(input_pos30)
-label = torch.FloatTensor(output_pos30)
-
-data = data.to(device)
-label = label.to(device)
-
-model = TwoLayerNet(len(input_data[0]),10,10,len(output_pos30[0]))
+# Construct our model by instantiating the class defined above
+model = TwoLayerNet(D_in, H1,H2, D_out)
 model = model.to(device)
 
-criterion = torch.nn.MSELoss(reduction='sum')
+# Construct our loss function and an Optimizer. The call to model.parameters()
+# in the SGD constructor will contain the learnable parameters of the two
+# nn.Linear modules which are members of the model.
+criterion = torch.nn.L1Loss(reduction='sum')
 criterion = criterion.to(device)
-# optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
-# # optimizer.to(device)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
+for t in range(50000):
+    for i in range(0,len(y_li),1000000000):
+        length = min(1000000000,len(y_li)-i)
 
-# for t in range(5000):
-#     # Forward pass: Compute predicted y by passing x to the model
-#     y_pred = model(data)
-
-#     # Compute and print loss
-#     loss = criterion(y_pred, label)
-#     if t % 100 == 0:
-#         print(t, loss.item())
-
-#     # Zero gradients, perform a backward pass, and update the weights.
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-6)
-for t in range(1000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
+        y_pred = model(x[i:i+length])
 
         # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
+        loss = criterion(y_pred, y[i:i+length])
+        if t % 100 == 0:
+            print(t, loss.item())
+
         # Zero gradients, perform a backward pass, and update the weights.
         optimizer.zero_grad()
-
         loss.backward()
         optimizer.step()
 
-        # print(i, loss.item())
-    y_pred = model(data)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-5)
+for t in range(50000):
+    for i in range(0,len(y_li),1000000000):
+        length = min(1000000000,len(y_li)-i)
+
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(x[i:i+length])
 
         # Compute and print loss
-    loss = criterion(y_pred, label)
-    print(t, loss.item())
+        loss = criterion(y_pred, y[i:i+length])
+        if t % 100 == 0:
+            print(t, loss.item())
 
-print("halt")
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-6)
+for t in range(50000):
+    for i in range(0,len(y_li),1000000000):
+        length = min(1000000000,len(y_li)-i)
+
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(x[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, y[i:i+length])
+        if t % 100 == 0:
+            print(t, loss.item())
+
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
+for t in range(50000):
+    for i in range(0,len(y_li),1000000000):
+        length = min(1000000000,len(y_li)-i)
+
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(x[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, y[i:i+length])
+        if t % 100 == 0:
+            print(t, loss.item())
+
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+for t in range(50000):
+    for i in range(0,len(y_li),1000000000):
+        length = min(1000000000,len(y_li)-i)
+
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(x[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, y[i:i+length])
+        if t % 100 == 0:
+            print(t, loss.item())
+
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-9)
+for t in range(50000):
+    for i in range(0,len(y_li),1000000000):
+        length = min(1000000000,len(y_li)-i)
+
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(x[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, y[i:i+length])
+        if t % 100 == 0:
+            print(t, loss.item())
+
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
+for t in range(50000):
+    for i in range(0,len(y_li),1000000000):
+        length = min(1000000000,len(y_li)-i)
+
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(x[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, y[i:i+length])
+        if t % 100 == 0:
+            print(t, loss.item())
+
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+y_pred = model(x)
+y_pred = y_pred.cpu()
+y_pred_li= y_pred.tolist()
+y_pred = [i[0] for i in y_pred_li]
+
+y = y.cpu()
+y_li = y.tolist()
+y = [i[0] for i in y_li]
+plt.plot(y_pred,c='r')
+plt.plot(y,c='b')
+plt.show()
+
+torch.save(model.state_dict(), './model_sine')

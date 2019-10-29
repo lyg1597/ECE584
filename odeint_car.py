@@ -4,8 +4,8 @@ from scipy.integrate import odeint
 import random
 
 state_input = []
-fn = "data_straight"
-delta_const = 0
+fn = "data_neg30"
+delta_const = -30
 v_const = 3
 time_horizon = 1000
 
@@ -46,23 +46,23 @@ timeGrid = np.arange(0,time_horizon,0.01)
 # ip = np.zeros((len(timeGrid)))
 
 #ip[300:600] = 5.0
-initR = [0,0,0]
-fR = odeint(func1,initR,timeGrid)
-# print(state_input)
-j = 0
-with open(fn+".dat",'w+') as file:
-    # for line in state_input:
-    #     for i in line:
-    #         file.write(str(i)+" ")
-    #     file,write(str(30))
-    #     file.write("\n")        
-    for i in range(np.shape(fR)[0]):
-        file.write(str(timeGrid[i])+" ")
-        for j in range(np.shape(fR)[1]):
-            file.write(str(fR[i,j])+" ")
-        file.write(str(v_const)+" ")
-        file.write(str(delta_const)+"\n")
-        
-state_input_arr = np.array(state_input)
+for i in range(4):
+    initR = [0,0,i*np.pi/2]
+    fR = odeint(func1,initR,timeGrid)
+    # print(state_input)
+    j = 0
+    with open(fn+"_"+str(i)+".dat",'w+') as file:
+        # for line in state_input:
+        #     for i in line:
+        #         file.write(str(i)+" ")
+        #     file,write(str(30))
+        #     file.write("\n")        
+        for i in range(np.shape(fR)[0]):
+            file.write(str(timeGrid[i])+" ")
+            for j in range(np.shape(fR)[1]):
+                file.write(str(fR[i,j])+" ")
+            file.write(str(v_const)+" ")
+            file.write(str(delta_const)+"\n")
+            
 
 

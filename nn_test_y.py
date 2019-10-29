@@ -141,13 +141,13 @@ criterion = criterion.to(device)
 # optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
 # # optimizer.to(device)
 
-# for t in range(10000):
+# for t in range(1000000000000):
 #     # Forward pass: Compute predicted y by passing x to the model
 #     y_pred = model(data)
 
 #     # Compute and print loss
 #     loss = criterion(y_pred, label)
-#     if t % 100 == 0:
+#     if t % 10000000000 == 0:
 #         print(t, loss.item())
 
 #     # Zero gradients, perform a backward pass, and update the weights.
@@ -156,9 +156,9 @@ criterion = criterion.to(device)
 #     optimizer.step()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
-for t in range(2000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -183,9 +183,9 @@ print(loss.item())
 # optimizer.step()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-9)
-for t in range(2000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -210,9 +210,9 @@ print(loss.item())
 # optimizer.step()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
-for t in range(2000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -239,9 +239,9 @@ print(loss.item())
 # loss.backward()
 # optimizer.step()
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-11)
-for t in range(2000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -266,9 +266,9 @@ print(loss.item())
 # optimizer.step()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-9)
-for t in range(2000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -292,10 +292,10 @@ print(loss.item())
 # loss.backward()
 # optimizer.step()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-13)
-for t in range(2000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -318,6 +318,89 @@ print(loss.item())
 
 # loss.backward()
 # optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(data[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, label[i:i+length])
+        
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+
+        loss.backward()
+        optimizer.step()
+
+# print(i, loss.item())
+y_pred = model(data)
+
+# Compute and print loss
+loss = criterion(y_pred, label)
+print(loss.item())
+# optimizer.zero_grad()
+
+# loss.backward()
+# optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-11)
+for t in range(20000):
+    for i in range(0,len(data),10000000000):
+        length = min(10000000000,len(data)-i)
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(data[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, label[i:i+length])
+        
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+
+        loss.backward()
+        optimizer.step()
+
+# print(i, loss.item())
+y_pred = model(data)
+
+# Compute and print loss
+loss = criterion(y_pred, label)
+print(loss.item())
+# optimizer.zero_grad()
+
+# loss.backward()
+# optimizer.step()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+for t in range(20000):
+    for i in range(0,len(data),100):
+        length = min(100,len(data)-i)
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(data[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, label[i:i+length])
+        
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+
+        loss.backward()
+        optimizer.step()
+
+    # print(i, loss.item())
+    y_pred = model(data)
+
+    # Compute and print loss
+    loss = criterion(y_pred, label)
+    print(loss.item())
+    # optimizer.zero_grad()
+
+    # loss.backward()
+    # optimizer.step()
+
+###########################
 y_pred = model(data)
 y_pred = y_pred.cpu()
 y_pred_li= y_pred.tolist()
@@ -326,8 +409,12 @@ y_pred = [i[0] for i in y_pred_li]
 y = label.cpu()
 y_li = y.tolist()
 y = [i[0] for i in y_li]
-plt.plot(y_pred,'ro')
-plt.plot(y,'bo')
+
+x = data.cpu()
+x_li = x.tolist()
+x = [i[0] for i in x_li]
+plt.plot(x,y_pred,'ro')
+plt.plot(x,y,'bo')
 plt.show()
 
 torch.save(model, './model_y_full')

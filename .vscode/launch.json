@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: run",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/2_ECE584/project/data_visualize.py"
+        },
+        {
             "name": "Python: Car model",
             "type": "python",
             "request": "launch",

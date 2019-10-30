@@ -43,7 +43,7 @@ for i in range(len(input_data)):
     y.append(input_data[i][1])
     theta.append(input_data[i][2])
     v.append(input_data[i][3])
-    v.append(input_data[i][4])
+    delta.append(input_data[i][4])
 
 dx = []
 dy = []

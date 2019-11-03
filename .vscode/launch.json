@@ -8,7 +8,7 @@
             "name": "Python: run",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/data_visualize.py"
+            "program": "D:/1_Study/2_ECE584/project/nn_test_full.py"
         },
         {
             "name": "Python: Car model",
@@ -23,10 +23,10 @@
             "program": "D:/1_Study/2_ECE584/project/nn_test3.py"
         },
         {
-            "name": "Python: nn_y",
+            "name": "Python: nn_theta",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/nn_test_y.py"
+            "program": "D:/1_Study/2_ECE584/project/nn_test_theta_more.py"
         },
         {
             "name": "Python: nn_y_visualize",

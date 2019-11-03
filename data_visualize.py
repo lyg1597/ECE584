@@ -26,7 +26,7 @@ for i in range(4):
         temp = []
         temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
         temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
+        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
         output_temp.append(temp)
     
     data = data + data_temp
@@ -59,5 +59,5 @@ plt.show()
 plt.plot(theta,dx,'bo')
 plt.show()
 
-plt.plot(dtheta,'bo')
+plt.plot(delta,dtheta,'bo')
 plt.show()

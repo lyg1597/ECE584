@@ -42,8 +42,8 @@ for i in range(4):
     for i in range(1,len(data_temp)):
         temp = []
         # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
         output_temp.append(temp)
 
     data_straight = data_straight + data_temp
@@ -73,8 +73,8 @@ for i in range(4):
     for i in range(1,len(data_temp)):
         temp = []
         # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
         output_temp.append(temp)
 
     data_pos30 = data_pos30 + data_temp
@@ -103,8 +103,8 @@ for i in range(4):
     for i in range(1,len(data_temp)):
         temp = []
         # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
         output_temp.append(temp)
 
     data_neg30 = data_neg30 + data_temp
@@ -113,6 +113,8 @@ for i in range(4):
 
 #############################
 data = data_straight+data_pos30+data_neg30
+# input_data = input_straight+input_pos30+input_neg30
+# output_data = output_straight+output_pos30+output_neg30
 
 input_data = []
 output_data = []
@@ -133,19 +135,19 @@ delta = []
 for i in range(len(input_data)):
     # x.append(input_data[i][0])
     # y.append(input_data[i][1])
-    theta.append(input_data[i][0])
+    delta.append(input_data[i][2])
     # v.append(input_data[i][3])
-    # v.append(input_data[i][4])
+    # delta.append(input_data[i][4])
 
 dx = []
 dy = []
 dtheta = []
 for i in range(len(output_data)):
     # dx.append(output_data[i][0])
-    dy.append(output_data[i][0])
+    dtheta.append(output_data[i][0])
     # dtheta.append(output_data[i][2])
 
-plt.plot(theta,dy,'bo')
+plt.plot(delta,dtheta,'bo')
 plt.show()    
 
 device = torch.device('cuda')
@@ -161,22 +163,6 @@ model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
-# optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
-# # optimizer.to(device)
-
-# for t in range(1000000000000):
-#     # Forward pass: Compute predicted y by passing x to the model
-#     y_pred = model(data)
-
-#     # Compute and print loss
-#     loss = criterion(y_pred, label)
-#     if t % 10000000000 == 0:
-#         print(t, loss.item())
-
-#     # Zero gradients, perform a backward pass, and update the weights.
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
 for t in range(5000):
@@ -195,11 +181,16 @@ for t in range(5000):
         optimizer.step()
 
     if(t%100 == 0):
+        # print(i, loss.item())
         y_pred = model(data)
 
         # Compute and print loss
         loss = criterion(y_pred, label)
         print(t,loss.item())
+        # optimizer.zero_grad()
+
+        # loss.backward()
+        # optimizer.step()
 
 ###########################
 y_pred = model(data)
@@ -213,11 +204,11 @@ y = [i[0] for i in y_li]
 
 x = data.cpu()
 x_li = x.tolist()
-x = [i[0] for i in x_li]
+x = [i[2] for i in x_li]
 plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model.state_dict(), './model_y_more_full_state')
+torch.save(model.state_dict(), './model_theta_more_full_state')
 
 print("halt")

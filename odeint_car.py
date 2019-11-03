@@ -18,18 +18,6 @@ def getIp():
     return x
 
 def func1(vars,time):
-    # ip = [0,5]
-    # idx = random.randint(0,1)
-    # print(idx)
-    # leak = -0.3
-    # a = d = 0.1
-    # b = c = -0.2
-    # dxbydt = leak*Rates[0]+ a*Rates[0]+b/2.*Rates[1]+ip[idx]
-    # dybydt = leak*Rates[1]+ c*Rates[0]+d*Rates[1]+ip[idx]
-    # return [dxbydt, dybydt]
-    # dvx = 
-    # dvy = 
-    # dr = 
     L = 5
     theta = vars[2]
     ip = getIp()

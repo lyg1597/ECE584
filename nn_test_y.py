@@ -88,8 +88,34 @@ for i in range(1,len(data_neg30)):
 
 #############################
 data = data_straight+data_pos30+data_neg30
-# input_data = input_straight+input_pos30+input_neg30
-# output_data = output_straight+output_pos30+output_neg30
+
+input_data = []
+output_data = []
+for i in range(len(input_pos30)):
+    # input_data.append(input_straight[i])
+    input_data.append(input_pos30[i])
+    # input_data.append(input_neg30[i])    
+
+    # output_data.append(output_straight[i])
+    output_data.append(output_pos30[i])
+    # output_data.append(output_neg30[i])
+
+x = []
+y = []
+theta = []
+v = []
+delta = []
+for i in range(len(input_data)):
+    theta.append(input_data[i][0])
+
+dx = []
+dy = []
+dtheta = []
+for i in range(len(output_data)):
+    dy.append(output_data[i][0])
+
+plt.plot(theta,dy,'bo')
+plt.show()   
 
 input_data = []
 output_data = []
@@ -101,29 +127,6 @@ for i in range(len(input_straight)):
     output_data.append(output_straight[i])
     output_data.append(output_pos30[i])
     output_data.append(output_neg30[i])
-
-# combined = list(zip(input_data,output_data))
-# random.shuffle(combined)
-
-# input_data[:], output_data[:] = zip(*combined)
-
-with open('input_data.dat','w+') as fd:
-    for line in input_data:
-        fd.write(str(line[0]))
-        fd.write(' ')
-        fd.write(str(line[1]))
-        fd.write(' ')
-        fd.write(str(line[2]))
-        fd.write('\n')
-
-with open('output_data.dat','w+') as fd:
-    for line in output_data:
-        fd.write(str(line[0]))
-        # fd.write(' ')
-        # fd.write(str(line[1]))
-        # fd.write(' ')
-        # fd.write(str(line[2]))
-        fd.write('\n')
 
 device = torch.device('cuda')
 
@@ -138,164 +141,11 @@ model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
-# optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
-# # optimizer.to(device)
-
-# for t in range(1000000000000):
-#     # Forward pass: Compute predicted y by passing x to the model
-#     y_pred = model(data)
-
-#     # Compute and print loss
-#     loss = criterion(y_pred, label)
-#     if t % 10000000000 == 0:
-#         print(t, loss.item())
-
-#     # Zero gradients, perform a backward pass, and update the weights.
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
-
-        # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
-
-        loss.backward()
-        optimizer.step()
-
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-9)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
-
-        # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
-
-        loss.backward()
-        optimizer.step()
-
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
-
-        # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
-
-        loss.backward()
-        optimizer.step()
-
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
-
-# loss.backward()
-# optimizer.step()
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-11)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
-
-        # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
-
-        loss.backward()
-        optimizer.step()
-
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-9)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
-
-        # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
-
-        loss.backward()
-        optimizer.step()
-
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
+for t in range(5000):
+    for i in range(0,len(data),500):
+        length = min(500,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -308,98 +158,17 @@ for t in range(20000):
         loss.backward()
         optimizer.step()
 
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
+    if(t%100 == 0):
+        # print(i, loss.item())
+        y_pred = model(data)
 
         # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
+        loss = criterion(y_pred, label)
+        print(t,loss.item())
+        # optimizer.zero_grad()
 
-        loss.backward()
-        optimizer.step()
-
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-11)
-for t in range(20000):
-    for i in range(0,len(data),10000000000):
-        length = min(10000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
-
-        # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
-
-        loss.backward()
-        optimizer.step()
-
-# print(i, loss.item())
-y_pred = model(data)
-
-# Compute and print loss
-loss = criterion(y_pred, label)
-print(loss.item())
-# optimizer.zero_grad()
-
-# loss.backward()
-# optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(20000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
-        y_pred = model(data[i:i+length])
-
-        # Compute and print loss
-        loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
-        optimizer.zero_grad()
-
-        loss.backward()
-        optimizer.step()
-
-    # print(i, loss.item())
-    y_pred = model(data)
-
-    # Compute and print loss
-    loss = criterion(y_pred, label)
-    print(loss.item())
-    # optimizer.zero_grad()
-
-    # loss.backward()
-    # optimizer.step()
-
+        # loss.backward()
+        # optimizer.step()
 ###########################
 y_pred = model(data)
 y_pred = y_pred.cpu()
@@ -417,6 +186,6 @@ plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model, './model_y_full')
+torch.save(model, './model_y')
 
 print("halt")

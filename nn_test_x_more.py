@@ -41,8 +41,8 @@ for i in range(4):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
         # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
@@ -72,8 +72,8 @@ for i in range(4):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
         # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
@@ -102,8 +102,8 @@ for i in range(4):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
         # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
@@ -113,6 +113,8 @@ for i in range(4):
 
 #############################
 data = data_straight+data_pos30+data_neg30
+# input_data = input_straight+input_pos30+input_neg30
+# output_data = output_straight+output_pos30+output_neg30
 
 input_data = []
 output_data = []
@@ -161,27 +163,11 @@ model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
-# optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
-# # optimizer.to(device)
-
-# for t in range(1000000000000):
-#     # Forward pass: Compute predicted y by passing x to the model
-#     y_pred = model(data)
-
-#     # Compute and print loss
-#     loss = criterion(y_pred, label)
-#     if t % 10000000000 == 0:
-#         print(t, loss.item())
-
-#     # Zero gradients, perform a backward pass, and update the weights.
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
 for t in range(5000):
-    for i in range(0,len(data),500):
-        length = min(500,len(data)-i)
+    for i in range(0,len(data),1000):
+        length = min(1000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -195,11 +181,16 @@ for t in range(5000):
         optimizer.step()
 
     if(t%100 == 0):
+        # print(i, loss.item())
         y_pred = model(data)
 
         # Compute and print loss
         loss = criterion(y_pred, label)
         print(t,loss.item())
+        # optimizer.zero_grad()
+
+        # loss.backward()
+        # optimizer.step()
 
 ###########################
 y_pred = model(data)
@@ -218,6 +209,6 @@ plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model.state_dict(), './model_y_more_full_state')
+torch.save(model.state_dict(), './model_x_more_full_state')
 
 print("halt")

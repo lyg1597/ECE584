@@ -19,9 +19,12 @@ class TwoLayerNet(torch.nn.Module):
         return y
 
 delta_t = 0.01
-delta_const = -30
+delta_const = 0
 v_const = 3
-time_horizon = 100
+time_horizon = 15
+init_x = 0
+init_y = 0
+init_theta = 0
 
 def getIp():
     # delta_array = [-30,0,30]
@@ -141,20 +144,20 @@ data = data_straight+data_pos30+data_neg30
 input_data = []
 output_data = []
 for i in range(len(input_straight)):
-    # input_data.append(input_straight[i])
+    input_data.append(input_straight[i])
     input_data.append(input_pos30[i])
-    # input_data.append(input_neg30[i])    
+    input_data.append(input_neg30[i])    
 
-    # output_data.append(output_straight[i])
+    output_data.append(output_straight[i])
     output_data.append(output_pos30[i])
-    # output_data.append(output_neg30[i])
+    output_data.append(output_neg30[i])
 
 # combined = list(zip(input_data,output_data))
 # random.shuffle(combined)
 
 # input_data[:], output_data[:] = zip(*combined)
 trajectory = []
-initial = [0,0,0,3,-30]
+initial = [init_x,init_y,init_theta,v_const,delta_const]
 
 trajectory.append(initial)
 
@@ -171,7 +174,7 @@ model_x = model_x.to(device)
 model_y = model_y.to(device)
 model_theta = model_theta.to(device)
 temp = initial
-for i in range(10000):
+for i in range(int(time_horizon/delta_t)):
     data = [temp[2:5]]
     x_tensor = torch.FloatTensor(data)
     x_tensor = x_tensor.to(device)
@@ -193,9 +196,12 @@ for i in range(10000):
 
     x = temp[0] + dx*0.01
     y = temp[1] + dy*0.01
-    theta = (temp[2] + dtheta*0.01) % int(360)
-
-    temp = [x,y,theta,3,30]
+    if dtheta<180:
+        theta = (temp[2] + dtheta*0.01) % int(360)
+    else:
+       theta = (temp[2] + (dtheta-360)*0.01) % int(360)
+ 
+    temp = [x,y,theta,3,delta_const]
     trajectory.append(temp)
 
 # data = torch.FloatTensor(input_data)
@@ -236,8 +242,8 @@ plt.plot(x_tag,y_tag,'bo')
 
 # x = data.cpu()
 # x_li = x.tolist()
-# x = [i[0] for i in x_li]
-# plt.plot(y_pred,'ro')
-# plt.plot(y,'bo')
+# x = [i[2] for i in x_li]
+# plt.plot(x,y_pred,'ro')
+# plt.plot(x,y,'bo')
 
 plt.show()

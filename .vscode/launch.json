@@ -8,31 +8,8 @@
             "name": "Python: run",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/nn_test_full.py"
-        },
-        {
-            "name": "Python: Car model",
-            "type": "python",
-            "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/odeint_car.py"
-        },
-        {
-            "name": "Python: nn",
-            "type": "python",
-            "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/nn_test3.py"
-        },
-        {
-            "name": "Python: nn_theta",
-            "type": "python",
-            "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/nn_test_theta_more.py"
-        },
-        {
-            "name": "Python: nn_y_visualize",
-            "type": "python",
-            "request": "launch",
-            "program": "D:/1_Study/2_ECE584/project/nn_y_visualize.py"
+            "cwd": "D:/1_Study/2_ECE584/project/test_3_30-30/",
+            "program": "D:/1_Study/2_ECE584/project/test_3_30-30/nn_train_y.py"
         }
     ]
 }

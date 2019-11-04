@@ -21,10 +21,10 @@ class TwoLayerNet(torch.nn.Module):
 delta_t = 0.01
 delta_const = 0
 v_const = 3
-time_horizon = 15
-init_x = 0
-init_y = 0
-init_theta = 270
+time_horizon = 16
+init_x = -123
+init_y = 543
+init_theta = 312
 
 def getIp():
     # delta_array = [-30,0,30]

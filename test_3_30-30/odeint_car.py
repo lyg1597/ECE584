@@ -4,10 +4,10 @@ from scipy.integrate import odeint
 import random
 
 state_input = []
-fn = "data_neg30"
-delta_const = -30
+fn = "data_pos30"
+delta_const = 30
 v_const = 3
-time_horizon = 1000
+time_horizon = 100
 
 def getIp():
     # delta_array = [-30,0,30]

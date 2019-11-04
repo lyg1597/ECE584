@@ -24,7 +24,7 @@ v_const = 3
 time_horizon = 15
 init_x = 0
 init_y = 0
-init_theta = 0
+init_theta = 270
 
 def getIp():
     # delta_array = [-30,0,30]
@@ -220,7 +220,7 @@ for i in range(len(trajectory)):
 plt.plot(x,y,'ro')
 
 timeGrid = np.arange(0,time_horizon,0.01)
-initR = [0,0,0]
+initR = [init_x,init_y,init_theta*np.pi/180]
 fR = odeint(func1,initR,timeGrid)
 x_tag = []
 y_tag = []

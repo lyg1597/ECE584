@@ -180,10 +180,10 @@ criterion = criterion.to(device)
 #     loss.backward()
 #     optimizer.step()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
 for t in range(5000):
-    for i in range(0,len(data),500):
-        length = min(500,len(data)-i)
+    for i in range(0,len(data),100):
+        length = min(100,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 

@@ -144,8 +144,8 @@ criterion = criterion.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
 for t in range(5000):
-    for i in range(0,len(data),500):
-        length = min(500,len(data)-i)
+    for i in range(0,len(data),1000):
+        length = min(1000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 

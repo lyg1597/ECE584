@@ -21,20 +21,25 @@ class TwoLayerNet(torch.nn.Module):
 #############################
 
 def getIp(time):
-    # delta_array = [-30,0,30]
-    # delta_idx = random.randint(0,2)
     if(time<5):
         v = v_const
         delta = 30
-    elif time>=5 and time<10:
+    elif time>=5 and time<8:
         v = v_const
         delta = -30
-    elif time>=10 and time<15:
+    elif time>=8 and time<12:
         v = v_const
         delta = 30
-    else:
+    elif time>=12 and time<15:
         v = v_const
         delta = -30
+    else:
+        v = v_const
+        delta = 30
+
+    # v = v_const
+    # delta = delta_const
+
     x = [v,delta]
     return x
 
@@ -53,12 +58,12 @@ def func1(vars,time):
 #############################
 
 delta_t = 0.01
-delta_const = 31
+delta_const = 0
 v_const = 3
-time_horizon = 16
-init_x = -123
-init_y = 543
-init_theta = 312
+time_horizon = 18
+init_x = -96.63799936532966
+init_y = 543.8300791485603
+init_theta = 312.20374353408937
 
 #############################
 

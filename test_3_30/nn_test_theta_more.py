@@ -24,7 +24,7 @@ delta_t = 0.01
 data_straight = []
 input_straight = []
 output_straight = []
-for i in range(4):
+for i in range(8):
     data_temp = []
     with open("data_straight_"+str(int(i))+".dat") as file:
         line = file.readline()
@@ -119,13 +119,16 @@ data = data_straight+data_pos30+data_neg30
 input_data = []
 output_data = []
 for i in range(len(input_straight)):
-    input_data.append(input_straight[i])
-    input_data.append(input_pos30[i])
-    input_data.append(input_neg30[i])    
+    input_data.append(input_straight[i])   
 
     output_data.append(output_straight[i])
+
+for i in range(len(input_pos30)):
+    input_data.append(input_pos30[i])
+    input_data.append(input_neg30[i]) 
+
     output_data.append(output_pos30[i])
-    output_data.append(output_neg30[i])
+    output_data.append(output_neg30[i])    
 
 x = []
 y = []
@@ -165,9 +168,9 @@ criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(5000):
-    for i in range(0,len(data),500):
-        length = min(500,len(data)-i)
+for t in range(10000):
+    for i in range(0,len(data),1000):
+        length = min(1000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 

@@ -3,7 +3,6 @@ import torch
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from scipy.integrate import odeint
 
 class TwoLayerNet(torch.nn.Module):
     def __init__(self,D_in,H1,D_out):
@@ -18,34 +17,9 @@ class TwoLayerNet(torch.nn.Module):
         y = self.linear2(h1)
         return y
 
+
 delta_t = 0.01
-delta_const = 0
-v_const = 3
-time_horizon = 16
-init_x = 0
-init_y = 0
-init_theta = 45
-# 312
 
-def getIp():
-    # delta_array = [-30,0,30]
-    # delta_idx = random.randint(0,2)
-    v = v_const
-    delta = delta_const*np.pi/180
-    x = [v,delta]
-    return x
-
-def func1(vars,time):
-    L = 5
-    theta = vars[2]
-    ip = getIp()
-    v=ip[0]
-    delta = ip[1]
-    
-    dx = v*np.cos(theta)
-    dy = v*np.sin(theta)
-    dtheta = v/L * np.sin(delta)/np.cos(delta) 
-    return [dx,dy,dtheta]
 #############################
 data_straight = []
 input_straight = []
@@ -67,9 +41,9 @@ for i in range(4):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
         # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
+        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
     data_straight = data_straight + data_temp
@@ -98,9 +72,9 @@ for i in range(4):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
         # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
+        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
     data_pos30 = data_pos30 + data_temp
@@ -128,9 +102,9 @@ for i in range(4):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
         # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
+        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
     data_neg30 = data_neg30 + data_temp
@@ -153,98 +127,88 @@ for i in range(len(input_straight)):
     output_data.append(output_pos30[i])
     output_data.append(output_neg30[i])
 
-# combined = list(zip(input_data,output_data))
-# random.shuffle(combined)
-
-# input_data[:], output_data[:] = zip(*combined)
-trajectory = []
-initial = [init_x,init_y,init_theta,v_const,delta_const]
-
-trajectory.append(initial)
-
-model_x = TwoLayerNet(3,100,1)
-model_y = TwoLayerNet(3,100,1)
-model_theta = TwoLayerNet(3,100,1)
-model_x.load_state_dict(torch.load('./model_x_more_full_state'))
-model_y.load_state_dict(torch.load('./model_y_more_full_state'))
-model_theta.load_state_dict(torch.load('./model_theta_more_full_state'))
-
-device = torch.device('cuda')
-
-model_x = model_x.to(device)
-model_y = model_y.to(device)
-model_theta = model_theta.to(device)
-temp = initial
-for i in range(int(time_horizon/delta_t)):
-    data = [temp[2:5]]
-    x_tensor = torch.FloatTensor(data)
-    x_tensor = x_tensor.to(device)
-    dx_tensor = model_x(x_tensor)
-    dx_tensor.cpu()
-    dx = dx_tensor.data.tolist()[0][0]
-
-    y_tensor = torch.FloatTensor(data)
-    y_tensor = y_tensor.to(device)
-    dy_tensor = model_y(y_tensor)
-    dy_tensor.cpu()    
-    dy = dy_tensor.data.tolist()[0][0]
-
-    theta_tensor = torch.FloatTensor(data)
-    theta_tensor = theta_tensor.to(device)
-    dtheta_tensor = model_theta(theta_tensor)
-    dtheta_tensor.cpu()
-    dtheta = dtheta_tensor.data.tolist()[0][0]
-
-    x = temp[0] + dx*0.01
-    y = temp[1] + dy*0.01
-    if dtheta<180:
-        theta = (temp[2] + dtheta*0.01) % int(360)
-    else:
-       theta = (temp[2] + (dtheta-360)*0.01) % int(360)
- 
-    temp = [x,y,theta,3,delta_const]
-    trajectory.append(temp)
-
-# data = torch.FloatTensor(input_data)
-# label = torch.FloatTensor(output_data)
-# data = data.to(device)
-# label = label.to(device)
-
-###########################
 x = []
 y = []
 theta = []
-for i in range(len(trajectory)):
-    x.append(trajectory[i][0])
-    y.append(trajectory[i][1])
-    theta.append(trajectory[i][2])
-plt.plot(x,y,'ro')
+v = []
+delta = []
+for i in range(len(input_data)):
+    # x.append(input_data[i][0])
+    # y.append(input_data[i][1])
+    theta.append(input_data[i][0])
+    # v.append(input_data[i][3])
+    # v.append(input_data[i][4])
 
-timeGrid = np.arange(0,time_horizon,0.01)
-initR = [init_x,init_y,init_theta*np.pi/180]
-fR = odeint(func1,initR,timeGrid)
-x_tag = []
-y_tag = []
-theta_tag = []
-for i in range(np.shape(fR)[0]):
-    x_tag.append(fR[i,0])
-    y_tag.append(fR[i,1]) 
-    theta_tag.append((fR[i,2]*180/np.pi)%int(360))
-plt.plot(x_tag,y_tag,'bo')
+dx = []
+dy = []
+dtheta = []
+for i in range(len(output_data)):
+    # dx.append(output_data[i][0])
+    dy.append(output_data[i][0])
+    # dtheta.append(output_data[i][2])
 
-# y_pred = model_theta(data)
-# y_pred = y_pred.cpu()
-# y_pred_li= y_pred.tolist()
-# y_pred = [i[0] for i in y_pred_li]
+plt.plot(theta,dy,'bo')
+plt.show()    
 
-# y = label.cpu()
-# y_li = y.tolist()
-# y = [i[0] for i in y_li]
+device = torch.device('cuda')
 
-# x = data.cpu()
-# x_li = x.tolist()
-# x = [i[2] for i in x_li]
-# plt.plot(x,y_pred,'ro')
-# plt.plot(x,y,'bo')
+data = torch.FloatTensor(input_data)
+label = torch.FloatTensor(output_data)
 
+data = data.to(device)
+label = label.to(device)
+
+model = TwoLayerNet(len(data[0]),100,len(label[0]))
+model = model.to(device)
+
+criterion = torch.nn.MSELoss(reduction='sum')
+criterion = criterion.to(device)
+
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+for t in range(50000):
+    for i in range(0,len(data),1000):
+        length = min(1000,len(data)-i)
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(data[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, label[i:i+length])
+        
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+
+        loss.backward()
+        optimizer.step()
+
+    if(t%100 == 0):
+        # print(i, loss.item())
+        y_pred = model(data)
+
+        # Compute and print loss
+        loss = criterion(y_pred, label)
+        print(t,loss.item())
+        # optimizer.zero_grad()
+
+        # loss.backward()
+        # optimizer.step()
+
+###########################
+y_pred = model(data)
+y_pred = y_pred.cpu()
+y_pred_li= y_pred.tolist()
+y_pred = [i[0] for i in y_pred_li]
+
+y = label.cpu()
+y_li = y.tolist()
+y = [i[0] for i in y_li]
+
+x = data.cpu()
+x_li = x.tolist()
+x = [i[0] for i in x_li]
+plt.plot(x,y_pred,'ro')
+plt.plot(x,y,'bo')
 plt.show()
+
+torch.save(model.state_dict(), './model_x_more_full_state')
+
+print("halt")

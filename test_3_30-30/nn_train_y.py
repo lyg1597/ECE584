@@ -163,27 +163,11 @@ model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
-# optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
-# # optimizer.to(device)
 
-# for t in range(1000000000000):
-#     # Forward pass: Compute predicted y by passing x to the model
-#     y_pred = model(data)
-
-#     # Compute and print loss
-#     loss = criterion(y_pred, label)
-#     if t % 10000000000 == 0:
-#         print(t, loss.item())
-
-#     # Zero gradients, perform a backward pass, and update the weights.
-#     optimizer.zero_grad()
-#     loss.backward()
-#     optimizer.step()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-7)
-for t in range(5000):
-    for i in range(0,len(data),100):
-        length = min(100,len(data)-i)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+for t in range(50000):
+    for i in range(0,len(data),1000):
+        length = min(1000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 

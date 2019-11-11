@@ -4,10 +4,10 @@ from scipy.integrate import odeint
 import random
 
 state_input = []
-fn = "data_pos30"
-delta_const = 30
+fn = "data_straight"
+delta_const = 0
 v_const = 3
-time_horizon = 100
+time_horizon = 0.5
 
 def getIp():
     # delta_array = [-30,0,30]
@@ -34,8 +34,8 @@ timeGrid = np.arange(0,time_horizon,0.01)
 # ip = np.zeros((len(timeGrid)))
 
 #ip[300:600] = 5.0
-for i in range(4):
-    initR = [0,0,i*np.pi/2]
+for i in range(360):
+    initR = [0,0,i*np.pi/180]
     fR = odeint(func1,initR,timeGrid)
     # print(state_input)
     j = 0

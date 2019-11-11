@@ -24,7 +24,7 @@ delta_t = 0.01
 data_straight = []
 input_straight = []
 output_straight = []
-for i in range(4):
+for i in range(360):
     data_temp = []
     with open("data_straight_"+str(int(i))+".dat") as file:
         line = file.readline()
@@ -52,80 +52,82 @@ for i in range(4):
 
 
 #############################
-data_pos30 = []
-input_pos30 = []
-output_pos30 = []
-for i in range(4):
-    data_temp = []
-    with open("data_pos30_"+str(int(i))+".dat") as file:
-        line = file.readline()
-        while line:
-            line = line.split(' ')
-            line = [float(i) for i in line]
-            data_temp.append(line)
+data_pos = []
+input_pos = []
+output_pos = []
+for j in range(10,31,10):
+    for i in range(4):
+        data_temp = []
+        with open("data_pos"+str(int(j))+"_"+str(int(i))+".dat") as file:
             line = file.readline()
+            while line:
+                line = line.split(' ')
+                line = [float(i) for i in line]
+                data_temp.append(line)
+                line = file.readline()
 
-    input_temp = []
-    for i in range(0,len(data_temp)-1):
-        input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5]])
+        input_temp = []
+        for i in range(0,len(data_temp)-1):
+            input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5]])
 
-    output_temp = []
-    for i in range(1,len(data_temp)):
-        temp = []
-        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
-        output_temp.append(temp)
+        output_temp = []
+        for i in range(1,len(data_temp)):
+            temp = []
+            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
+            output_temp.append(temp)
 
-    data_pos30 = data_pos30 + data_temp
-    input_pos30 = input_pos30 + input_temp
-    output_pos30 = output_pos30 + output_temp
+        data_pos = data_pos + data_temp
+        input_pos = input_pos + input_temp
+        output_pos = output_pos + output_temp
 
 #############################
-data_neg30 = []
-input_neg30 = []
-output_neg30 = []
-for i in range(4):
-    data_temp = []
-    with open("data_neg30_"+str(int(i))+".dat") as file:
-        line = file.readline()
-        while line:
-            line = line.split(' ')
-            line = [float(i) for i in line]
-            data_temp.append(line)
+data_neg = []
+input_neg = []
+output_neg = []
+for j in range(10,31,10):
+    for i in range(4):
+        data_temp = []
+        with open("data_neg"+str(int(j))+"_"+str(int(i))+".dat") as file:
             line = file.readline()
+            while line:
+                line = line.split(' ')
+                line = [float(i) for i in line]
+                data_temp.append(line)
+                line = file.readline()
 
-    input_temp = []
-    for i in range(0,len(data_temp)-1):
-        input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5]])
+        input_temp = []
+        for i in range(0,len(data_temp)-1):
+            input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5]])
 
-    output_temp = []
-    for i in range(1,len(data_temp)):
-        temp = []
-        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
-        output_temp.append(temp)
+        output_temp = []
+        for i in range(1,len(data_temp)):
+            temp = []
+            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
+            output_temp.append(temp)
 
-    data_neg30 = data_neg30 + data_temp
-    input_neg30 = input_neg30 + input_temp
-    output_neg30 = output_neg30 + output_temp
+        data_neg = data_neg + data_temp
+        input_neg = input_neg + input_temp
+        output_neg = output_neg + output_temp
 
 #############################
-data = data_straight+data_pos30+data_neg30
-# input_data = input_straight+input_pos30+input_neg30
-# output_data = output_straight+output_pos30+output_neg30
+data = data_straight+data_pos+data_neg
 
 input_data = []
 output_data = []
 for i in range(len(input_straight)):
     input_data.append(input_straight[i])
-    input_data.append(input_pos30[i])
-    input_data.append(input_neg30[i])    
-
     output_data.append(output_straight[i])
-    output_data.append(output_pos30[i])
-    output_data.append(output_neg30[i])
+
+for i in range(len(input_pos)):
+    input_data.append(input_pos[i])
+    input_data.append(input_neg[i])    
+
+    output_data.append(output_pos[i])
+    output_data.append(output_neg[i])
 
 x = []
 y = []
@@ -143,11 +145,11 @@ dx = []
 dy = []
 dtheta = []
 for i in range(len(output_data)):
-    # dx.append(output_data[i][0])
+    dx.append(output_data[i][0])
     dy.append(output_data[i][0])
     # dtheta.append(output_data[i][2])
 
-plt.plot(theta,dy,'bo')
+plt.plot(theta,dx,'bo')
 plt.show()    
 
 device = torch.device('cuda')
@@ -181,16 +183,11 @@ for t in range(50000):
         optimizer.step()
 
     if(t%100 == 0):
-        # print(i, loss.item())
         y_pred = model(data)
 
         # Compute and print loss
         loss = criterion(y_pred, label)
         print(t,loss.item())
-        # optimizer.zero_grad()
-
-        # loss.backward()
-        # optimizer.step()
 
 ###########################
 y_pred = model(data)

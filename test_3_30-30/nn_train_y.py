@@ -24,7 +24,7 @@ delta_t = 0.01
 data_straight = []
 input_straight = []
 output_straight = []
-for i in range(4):
+for i in range(360):
     data_temp = []
     with open("data_straight_"+str(int(i))+".dat") as file:
         line = file.readline()
@@ -120,10 +120,12 @@ input_data = []
 output_data = []
 for i in range(len(input_straight)):
     input_data.append(input_straight[i])
+    output_data.append(output_straight[i])
+
+for i in range(len(input_pos)):
     input_data.append(input_pos[i])
     input_data.append(input_neg[i])    
 
-    output_data.append(output_straight[i])
     output_data.append(output_pos[i])
     output_data.append(output_neg[i])
 

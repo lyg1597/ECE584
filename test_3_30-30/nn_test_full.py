@@ -18,55 +18,35 @@ class TwoLayerNet(torch.nn.Module):
         y = self.linear2(h1)
         return y
 
-#############################
+delta_t = 0.01
+delta_const = 18
+v_const = 3
+time_horizon = 16
+init_x = 0
+init_y = 0
+init_theta = 0
+# 312
 
-def getIp(time):
-    if(time<10):
-        v = v_const
-        delta = -35
-    elif time>=4 and time<8:
-        v = v_const
-        delta = 0
-    elif time>=10 and time<14:
-        v = v_const
-        delta = -30
-    elif time>=14 and time<18:
-        v = v_const
-        delta = 30
-    else:
-        v = v_const
-        delta = -30
-
-    # v = v_const
-    # delta = delta_const
-
+def getIp():
+    # delta_array = [-30,0,30]
+    # delta_idx = random.randint(0,2)
+    v = v_const
+    delta = delta_const*np.pi/180
     x = [v,delta]
     return x
 
 def func1(vars,time):
     L = 5
     theta = vars[2]
-    ip = getIp(time)
+    ip = getIp()
     v=ip[0]
-    delta = ip[1]*np.pi/180
+    delta = ip[1]
     
     dx = v*np.cos(theta)
     dy = v*np.sin(theta)
     dtheta = v/L * np.sin(delta)/np.cos(delta) 
     return [dx,dy,dtheta]
-
 #############################
-
-delta_t = 0.01
-delta_const = 0
-v_const = 3
-time_horizon = 20
-init_x = 0
-init_y = 0
-init_theta = 90
-
-#############################
-
 data_straight = []
 input_straight = []
 output_straight = []
@@ -178,8 +158,7 @@ for i in range(len(input_straight)):
 
 # input_data[:], output_data[:] = zip(*combined)
 trajectory = []
-v_init,delta_init = getIp(0)
-initial = [init_x,init_y,init_theta,v_init,delta_init]
+initial = [init_x,init_y,init_theta,v_const,delta_const]
 
 trajectory.append(initial)
 
@@ -222,9 +201,8 @@ for i in range(int(time_horizon/delta_t)):
         theta = (temp[2] + dtheta*0.01) % int(360)
     else:
        theta = (temp[2] + (dtheta-360)*0.01) % int(360)
-    
-    v,delta = getIp(i*delta_t)
-    temp = [x,y,theta,v,delta]
+ 
+    temp = [x,y,theta,3,delta_const]
     trajectory.append(temp)
 
 # data = torch.FloatTensor(input_data)

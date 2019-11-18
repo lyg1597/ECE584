@@ -5,16 +5,16 @@ import random
 import matplotlib.pyplot as plt
 
 class TwoLayerNet(torch.nn.Module):
-    def __init__(self,D_in,H1,H2,D_out):
+    def __init__(self,D_in,H1,D_out):
         super(TwoLayerNet, self).__init__()
         self.linear1 = torch.nn.Linear(D_in, H1)
-        self.linear2 = torch.nn.Linear(H1, H2)
-        self.linear3 = torch.nn.Linear(H2, D_out)
+        # self.linear2 = torch.nn.Linear(H1, H2)
+        self.linear2 = torch.nn.Linear(H1, D_out)
 
     def forward(self,x):
         h1 = torch.nn.functional.relu(self.linear1(x))
-        h2 = torch.nn.functional.relu(self.linear2(h1))
-        y = self.linear3(h2)
+        # h2 = torch.nn.functional.relu(self.linear2(h1))
+        y = self.linear2(h1)
         return y
 
 
@@ -24,9 +24,9 @@ delta_t = 0.01
 data_straight = []
 input_straight = []
 output_straight = []
-for i in range(360):
+for i in range(36):
     data_temp = []
-    with open("data_straight_"+str(int(i))+".dat") as file:
+    with open("data_straight_"+str(int(i*10))+".dat") as file:
         line = file.readline()
         while line:
             line = line.split(' ')
@@ -43,7 +43,11 @@ for i in range(360):
         temp = []
         # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
         # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
+        # temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
+        dtheta = ((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360)
+        if dtheta > 180:
+            dtheta = dtheta - 360
+        temp.append(dtheta)
         output_temp.append(temp)
 
     data_straight = data_straight + data_temp
@@ -56,7 +60,7 @@ data_pos = []
 input_pos = []
 output_pos = []
 for j in range(10,31,10):
-    for i in range(4):
+    for i in range(1):
         data_temp = []
         with open("data_pos"+str(int(j))+"_"+str(int(i))+".dat") as file:
             line = file.readline()
@@ -75,7 +79,11 @@ for j in range(10,31,10):
             temp = []
             # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
             # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-            temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
+            # temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
+            dtheta = ((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360)
+            if dtheta > 180:
+                dtheta = dtheta - 360
+            temp.append(dtheta)
             output_temp.append(temp)
 
         data_pos = data_pos + data_temp
@@ -87,7 +95,7 @@ data_neg = []
 input_neg = []
 output_neg = []
 for j in range(10,31,10):
-    for i in range(4):
+    for i in range(1):
         data_temp = []
         with open("data_neg"+str(int(j))+"_"+str(int(i))+".dat") as file:
             line = file.readline()
@@ -106,7 +114,10 @@ for j in range(10,31,10):
             temp = []
             # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
             # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-            temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
+            dtheta = ((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360)
+            if dtheta > 180:
+                dtheta = dtheta - 360
+            temp.append(dtheta)
             output_temp.append(temp)
 
         data_neg = data_neg + data_temp
@@ -160,16 +171,16 @@ label = torch.FloatTensor(output_data)
 data = data.to(device)
 label = label.to(device)
 
-model = TwoLayerNet(len(data[0]),50,50,len(label[0]))
+model = TwoLayerNet(len(data[0]),100,len(label[0]))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-13)
-for t in range(10000):
-    for i in range(0,len(data),100000000):
-        length = min(100000000,len(data)-i)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+for t in range(50000):
+    for i in range(0,len(data),1000):
+        length = min(1000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 

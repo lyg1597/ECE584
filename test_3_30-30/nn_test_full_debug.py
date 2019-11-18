@@ -18,55 +18,35 @@ class TwoLayerNet(torch.nn.Module):
         y = self.linear2(h1)
         return y
 
-#############################
+delta_t = 0.01
+delta_const = 0
+v_const = 3
+time_horizon = 16
+init_x = 0
+init_y = 0
+init_theta = 45
+# 312
 
-def getIp(time):
-    if(time<10):
-        v = v_const
-        delta = -35
-    elif time>=4 and time<8:
-        v = v_const
-        delta = 0
-    elif time>=10 and time<14:
-        v = v_const
-        delta = -30
-    elif time>=14 and time<18:
-        v = v_const
-        delta = 30
-    else:
-        v = v_const
-        delta = -30
-
-    # v = v_const
-    # delta = delta_const
-
+def getIp():
+    # delta_array = [-30,0,30]
+    # delta_idx = random.randint(0,2)
+    v = v_const
+    delta = delta_const*np.pi/180
     x = [v,delta]
     return x
 
 def func1(vars,time):
     L = 5
     theta = vars[2]
-    ip = getIp(time)
+    ip = getIp()
     v=ip[0]
-    delta = ip[1]*np.pi/180
+    delta = ip[1]
     
     dx = v*np.cos(theta)
     dy = v*np.sin(theta)
     dtheta = v/L * np.sin(delta)/np.cos(delta) 
     return [dx,dy,dtheta]
-
 #############################
-
-delta_t = 0.01
-delta_const = 0
-v_const = 3
-time_horizon = 20
-init_x = 0
-init_y = 0
-init_theta = 90
-
-#############################
-
 data_straight = []
 input_straight = []
 output_straight = []
@@ -88,8 +68,8 @@ for i in range(4):
     for i in range(1,len(data_temp)):
         temp = []
         # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
+        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        # temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
         output_temp.append(temp)
 
     data_straight = data_straight + data_temp
@@ -119,8 +99,8 @@ for i in range(4):
     for i in range(1,len(data_temp)):
         temp = []
         # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
+        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        # temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
         output_temp.append(temp)
 
     data_pos30 = data_pos30 + data_temp
@@ -149,8 +129,8 @@ for i in range(4):
     for i in range(1,len(data_temp)):
         temp = []
         # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
+        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        # temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(np.pi*delta_t))%int(360))
         output_temp.append(temp)
 
     data_neg30 = data_neg30 + data_temp
@@ -166,20 +146,19 @@ input_data = []
 output_data = []
 for i in range(len(input_straight)):
     input_data.append(input_straight[i])
-    input_data.append(input_pos30[i])
-    input_data.append(input_neg30[i])    
+    # input_data.append(input_pos30[i])
+    # input_data.append(input_neg30[i])    
 
     output_data.append(output_straight[i])
-    output_data.append(output_pos30[i])
-    output_data.append(output_neg30[i])
+    # output_data.append(output_pos30[i])
+    # output_data.append(output_neg30[i])
 
 # combined = list(zip(input_data,output_data))
 # random.shuffle(combined)
 
 # input_data[:], output_data[:] = zip(*combined)
 trajectory = []
-v_init,delta_init = getIp(0)
-initial = [init_x,init_y,init_theta,v_init,delta_init]
+initial = [init_x,init_y,init_theta,v_const,delta_const]
 
 trajectory.append(initial)
 
@@ -195,78 +174,75 @@ device = torch.device('cuda')
 model_x = model_x.to(device)
 model_y = model_y.to(device)
 model_theta = model_theta.to(device)
-temp = initial
-for i in range(int(time_horizon/delta_t)):
-    data = [temp[2:5]]
-    x_tensor = torch.FloatTensor(data)
-    x_tensor = x_tensor.to(device)
-    dx_tensor = model_x(x_tensor)
-    dx_tensor.cpu()
-    dx = dx_tensor.data.tolist()[0][0]
 
-    y_tensor = torch.FloatTensor(data)
-    y_tensor = y_tensor.to(device)
-    dy_tensor = model_y(y_tensor)
-    dy_tensor.cpu()    
-    dy = dy_tensor.data.tolist()[0][0]
+dx_arr = []
+dx_pre_arr = []
+dy_arr = []
+dy_pre_arr = []
+dtheta_arr = []
+dtheta_pre_arr = []
+theta = []
+# for i in range(360):
+#     data = [[i,3,0]]
+#     theta.append(i)
+#     x_tensor = torch.FloatTensor(data)
+#     x_tensor = x_tensor.to(device)
+#     dx_tensor = model_x(x_tensor)
+#     dx_tensor.cpu()
+#     dx = dx_tensor.data.tolist()[0][0]
 
-    theta_tensor = torch.FloatTensor(data)
-    theta_tensor = theta_tensor.to(device)
-    dtheta_tensor = model_theta(theta_tensor)
-    dtheta_tensor.cpu()
-    dtheta = dtheta_tensor.data.tolist()[0][0]
+#     y_tensor = torch.FloatTensor(data)
+#     y_tensor = y_tensor.to(device)
+#     dy_tensor = model_y(y_tensor)
+#     dy_tensor.cpu()    
+#     dy = dy_tensor.data.tolist()[0][0]
 
-    x = temp[0] + dx*0.01
-    y = temp[1] + dy*0.01
-    if dtheta<180:
-        theta = (temp[2] + dtheta*0.01) % int(360)
-    else:
-       theta = (temp[2] + (dtheta-360)*0.01) % int(360)
+#     theta_tensor = torch.FloatTensor(data)
+#     theta_tensor = theta_tensor.to(device)
+#     dtheta_tensor = model_theta(theta_tensor)
+#     dtheta_tensor.cpu()
+#     dtheta = dtheta_tensor.data.tolist()[0][0]
+
+#     dx_pre_arr.append(dx)
+#     dy_pre_arr.append(dy)
+#     dtheta_pre_arr.append(dtheta)
+
+#     timeGrid = np.arange(0,0.015,0.01)
+#     initR = [init_x,init_y,i*np.pi/180]
+#     fR = odeint(func1,initR,timeGrid)
+#     dx=(fR[1,0]-fR[0,0])/0.01
+#     dx_arr.append(dx)
     
-    v,delta = getIp(i*delta_t)
-    temp = [x,y,theta,v,delta]
-    trajectory.append(temp)
+#     dy=(fR[1,1]-fR[0,1])/0.01
+#     dy_arr.append(dy)
+    
+#     dtheta=(fR[1,2]-fR[0,2])/0.01
+#     dtheta_arr.append(dtheta)
 
-# data = torch.FloatTensor(input_data)
-# label = torch.FloatTensor(output_data)
-# data = data.to(device)
-# label = label.to(device)
+    
+data = torch.FloatTensor(input_data)
+label = torch.FloatTensor(output_data)
+data = data.to(device)
+label = label.to(device)
 
 ###########################
-x = []
-y = []
-theta = []
-for i in range(len(trajectory)):
-    x.append(trajectory[i][0])
-    y.append(trajectory[i][1])
-    theta.append(trajectory[i][2])
-plt.plot(x,y,'ro')
+# plt.plot(theta,dy_pre_arr,'ro')
 
-timeGrid = np.arange(0,time_horizon,0.01)
-initR = [init_x,init_y,init_theta*np.pi/180]
-fR = odeint(func1,initR,timeGrid)
-x_tag = []
-y_tag = []
-theta_tag = []
-for i in range(np.shape(fR)[0]):
-    x_tag.append(fR[i,0])
-    y_tag.append(fR[i,1]) 
-    theta_tag.append((fR[i,2]*180/np.pi)%int(360))
-plt.plot(x_tag,y_tag,'bo')
+# plt.plot(theta,dy_arr,'bo')
 
-# y_pred = model_theta(data)
-# y_pred = y_pred.cpu()
-# y_pred_li= y_pred.tolist()
-# y_pred = [i[0] for i in y_pred_li]
+y_pred = model_y(data)
+y_pred = y_pred.cpu()
+y_pred_li= y_pred.tolist()
+y_pred = [i[0] for i in y_pred_li]
 
-# y = label.cpu()
-# y_li = y.tolist()
-# y = [i[0] for i in y_li]
+y = label.cpu()
+y_li = y.tolist()
+y = [i[0] for i in y_li]
 
-# x = data.cpu()
-# x_li = x.tolist()
-# x = [i[2] for i in x_li]
-# plt.plot(x,y_pred,'ro')
-# plt.plot(x,y,'bo')
+x = data.cpu()
+x_li = x.tolist()
+x = [i[0] for i in x_li]
+plt.plot(x,y_pred,'ro')
+plt.plot(x,y,'bo')
 
 plt.show()

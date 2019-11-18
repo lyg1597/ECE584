@@ -24,9 +24,9 @@ delta_t = 0.01
 data_straight = []
 input_straight = []
 output_straight = []
-for i in range(360):
+for i in range(36):
     data_temp = []
-    with open("data_straight_"+str(int(i))+".dat") as file:
+    with open("data_straight_"+str(int(i*10))+".dat") as file:
         line = file.readline()
         while line:
             line = line.split(' ')
@@ -167,7 +167,7 @@ criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
 optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(50000):
+for t in range(10000):
     for i in range(0,len(data),1000):
         length = min(1000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
@@ -188,7 +188,6 @@ for t in range(50000):
         # Compute and print loss
         loss = criterion(y_pred, label)
         print(t,loss.item())
-
 ###########################
 y_pred = model(data)
 y_pred = y_pred.cpu()

@@ -5,16 +5,16 @@ import random
 import matplotlib.pyplot as plt
 
 class TwoLayerNet(torch.nn.Module):
-    def __init__(self,D_in,H1,D_out):
+    def __init__(self,D_in,H1,H2,D_out):
         super(TwoLayerNet, self).__init__()
         self.linear1 = torch.nn.Linear(D_in, H1)
-        # self.linear2 = torch.nn.Linear(H1, H2)
-        self.linear2 = torch.nn.Linear(H1, D_out)
+        self.linear2 = torch.nn.Linear(H1, H2)
+        self.linear3 = torch.nn.Linear(H2, D_out)
 
     def forward(self,x):
         h1 = torch.nn.functional.relu(self.linear1(x))
-        # h2 = torch.nn.functional.relu(self.linear2(h1))
-        y = self.linear2(h1)
+        h2 = torch.nn.functional.relu(self.linear2(h1))
+        y = self.linear3(h2)
         return y
 
 
@@ -41,8 +41,8 @@ for i in range(36):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
         # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
@@ -73,8 +73,8 @@ for j in range(10,31,10):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -104,8 +104,8 @@ for j in range(10,31,10):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -129,6 +129,15 @@ for i in range(len(input_pos)):
     output_data.append(output_pos[i])
     output_data.append(output_neg[i])
 
+input_shuf = []
+output_shuf = []
+index_shuf = list(range(len(input_data)))
+for i in index_shuf:
+    input_shuf.append(input_data[i])
+    output_shuf.append(output_data[i])
+input_data = input_shuf
+output_data = output_shuf
+
 x = []
 y = []
 theta = []
@@ -145,11 +154,11 @@ dx = []
 dy = []
 dtheta = []
 for i in range(len(output_data)):
-    dx.append(output_data[i][0])
+    # dx.append(output_data[i][0])
     dy.append(output_data[i][0])
     # dtheta.append(output_data[i][2])
 
-plt.plot(theta,dx,'bo')
+plt.plot(theta,dy,'bo')
 plt.show()    
 
 device = torch.device('cuda')
@@ -160,16 +169,16 @@ label = torch.FloatTensor(output_data)
 data = data.to(device)
 label = label.to(device)
 
-model = TwoLayerNet(len(data[0]),100,len(label[0]))
+model = TwoLayerNet(len(data[0]),100,100,len(label[0]))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(50000):
-    for i in range(0,len(data),1000):
-        length = min(1000,len(data)-i)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
+for t in range(10000):
+    for i in range(0,len(data),10000):
+        length = min(10000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -205,6 +214,6 @@ plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model.state_dict(), './model_x_more_full_state')
+torch.save(model.state_dict(), './model_y_more_full_state_deep')
 
 print("halt")

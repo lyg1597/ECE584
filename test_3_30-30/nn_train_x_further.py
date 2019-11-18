@@ -161,6 +161,7 @@ data = data.to(device)
 label = label.to(device)
 
 model = TwoLayerNet(len(data[0]),100,len(label[0]))
+model.load_state_dict(torch.load('./model_x_more_full_state'))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')

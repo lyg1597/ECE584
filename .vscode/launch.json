@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "cwd": "D:/1_Study/2_ECE584/project/test_3_30-30",
-            "program": "D:/1_Study/2_ECE584/project/test_3_30-30/nn_train_theta.py"
+            "program": "D:/1_Study/2_ECE584/project/test_3_30-30/nn_train_y.py"
         }
     ]
 }

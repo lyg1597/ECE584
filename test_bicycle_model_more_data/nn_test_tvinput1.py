@@ -32,15 +32,17 @@ Lf = 3
 
 def getIp(time):
     if(time<5):
-        delta = 20
-    elif time>=5 and time<8:
-        delta = -10
-    elif time>=8 and time<12:
-        delta = 30
-    elif time>=12 and time<15:
+        delta = 28
+    elif time>=5 and time<10:
+        delta = -15
+    elif time>=10 and time<15:
+        delta = 16
+    elif time>=15 and time<20:
         delta = -27
     else:
         delta = 16
+
+    # delta = 0
 
     a = a_const
     delta_temp = delta*np.pi/180
@@ -102,6 +104,8 @@ model_v = model_v.to(device)
 
 temp = initial
 for i in range(int(time_horizon/delta_t)):
+    # if i==1210:
+    #     print("here")
     data = [temp[2:6]]
     x_tensor = torch.FloatTensor(data)
     x_tensor = x_tensor.to(device)
@@ -170,6 +174,18 @@ for i in range(np.shape(fR)[0]):
 plt.plot(x_tag,y_tag,'bo')
 
 plt.show()
+
+# plt.plot(x)
+# plt.plot(x_tag)
+# plt.show()
+
+# plt.plot(theta)
+# plt.plot(theta_tag)
+# plt.show()
+
+# plt.plot(y)
+# plt.plot(y_tag)
+# plt.show()
 
 diff = []
 diff_per = []

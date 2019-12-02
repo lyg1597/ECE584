@@ -177,10 +177,10 @@ model = model.to(device)
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
-for t in range(10000):
-    for i in range(0,len(data),1000000000000000000000000):
-        length = min(1000000000000000000000000,len(data)-i)
+optimizer = torch.optim.SGD(model.parameters(), lr=2e-10)
+for t in range(50000):
+    for i in range(0,len(data),100000000000000000000000000000):
+        length = min(100000000000000000000000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 

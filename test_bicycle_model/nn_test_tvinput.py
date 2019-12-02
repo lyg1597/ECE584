@@ -31,16 +31,18 @@ Lf = 3
 # 312
 
 def getIp(time):
-    if(time<5):
-        delta = 20
-    elif time>=5 and time<8:
-        delta = -10
-    elif time>=8 and time<12:
-        delta = 30
-    elif time>=12 and time<15:
-        delta = -27
-    else:
-        delta = 16
+    # if(time<5):
+    #     delta = 20
+    # elif time>=5 and time<8:
+    #     delta = -10
+    # elif time>=8 and time<12:
+    #     delta = 30
+    # elif time>=12 and time<15:
+    #     delta = -27
+    # else:
+    #     delta = 16
+
+    # delta = 0
 
     a = a_const
     delta_temp = delta*np.pi/180

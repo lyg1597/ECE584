@@ -8,8 +8,8 @@
             "name": "Python: test",
             "type": "python",
             "request": "launch",
-            "cwd": "D:/1_Study/2_ECE584/project/test_bicycle_model",
-            "program": "D:/1_Study/2_ECE584/project/test_bicycle_model/nn_test_full.py"
+            "cwd": "D:/1_Study/2_ECE584/project/test_bicycle_model_more_data",
+            "program": "D:/1_Study/2_ECE584/project/test_bicycle_model_more_data/nn_test_tvinput.py"
         },
         {
             "name": "Python: train",

@@ -167,7 +167,7 @@ model = model.to(device)
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-6)
 for t in range(50000):
     for i in range(0,len(data),1000):
         length = min(1000,len(data)-i)

@@ -1,3 +1,6 @@
+# Referenced from:
+# http://www.cs.cmu.edu/~motionplanning/reading/PlanningforDynamicVeh-1.pdf
+
 import numpy as np
 from scipy.integrate import odeint
 # import matplotlib.pylab as pl

@@ -5,11 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: run",
+            "name": "Python: test",
             "type": "python",
             "request": "launch",
-            "cwd": "D:/1_Study/2_ECE584/project/test_3_30-30",
-            "program": "D:/1_Study/2_ECE584/project/test_3_30-30/nn_train_y.py"
+            "cwd": "D:/1_Study/2_ECE584/project/test_bicycle_model",
+            "program": "D:/1_Study/2_ECE584/project/test_bicycle_model/nn_test_full.py"
+        },
+        {
+            "name": "Python: train",
+            "type": "python",
+            "request": "launch",
+            "cwd": "D:/1_Study/2_ECE584/project/test_bicycle_model",
+            "program": "D:/1_Study/2_ECE584/project/test_bicycle_model/nn_train_theta_further.py"
+        },
+        {
+            "name": "Python: car",
+            "type": "python",
+            "request": "launch",
+            "cwd": "D:/1_Study/2_ECE584/project/test_bicycle_model",
+            "program": "D:/1_Study/2_ECE584/project/test_bicycle_model/odeint_car_bicycle1.py"
         }
     ]
 }

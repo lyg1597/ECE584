@@ -33,7 +33,7 @@ data_straight = []
 input_straight = []
 output_straight = []
 for j in range(0,1):
-    for i in range(0,360,5):
+    for i in range(0,360,30):
         data_temp = []
         with open("./data/data_straight"+str(int(i))+"_"+str(int(j))+".dat") as file:
             line = file.readline()
@@ -158,8 +158,8 @@ for i in range(len(output_data)):
     dy.append(output_data[i][0])
     # dtheta.append(output_data[i][2])
 
-# plt.plot(theta,dy,'bo')
-# plt.show()    
+plt.plot(theta,dy,'bo')
+plt.show()    
 
 device = torch.device('cuda')
 
@@ -169,17 +169,16 @@ label = torch.FloatTensor(output_data)
 data = data.to(device)
 label = label.to(device)
 
-model = TwoLayerNet(len(data[0]),20,len(label[0]))
-model.load_state_dict(torch.load('./model_y_more_full_state'))
+model = TwoLayerNet(len(data[0]),10,len(label[0]))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(5000):
-    for i in range(0,len(data),1000):
-        length = min(1000,len(data)-i)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-9)
+for t in range(100000):
+    for i in range(0,len(data),1000000000000):
+        length = min(1000000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 

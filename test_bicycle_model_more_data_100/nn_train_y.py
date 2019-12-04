@@ -33,7 +33,7 @@ data_straight = []
 input_straight = []
 output_straight = []
 for j in range(0,1):
-    for i in range(0,360,5):
+    for i in range(0,360,30):
         data_temp = []
         with open("./data/data_straight"+str(int(i))+"_"+str(int(j))+".dat") as file:
             line = file.readline()
@@ -50,8 +50,8 @@ for j in range(0,1):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
         # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
@@ -82,8 +82,8 @@ for k in range(0,1):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -113,8 +113,8 @@ for k in range(0,1):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -154,12 +154,12 @@ dx = []
 dy = []
 dtheta = []
 for i in range(len(output_data)):
-    dx.append(output_data[i][0])
-    # dy.append(output_data[i][0])
+    # dx.append(output_data[i][0])
+    dy.append(output_data[i][0])
     # dtheta.append(output_data[i][2])
 
-# plt.plot(theta,dx,'bo')
-# plt.show()    
+plt.plot(theta,dy,'bo')
+plt.show()    
 
 device = torch.device('cuda')
 
@@ -169,18 +169,16 @@ label = torch.FloatTensor(output_data)
 data = data.to(device)
 label = label.to(device)
 
-model = TwoLayerNet(len(data[0]),20,len(label[0]))
-model.load_state_dict(torch.load('./model_x_more_full_state'))
-
+model = TwoLayerNet(len(data[0]),100,len(label[0]))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=2e-10)
-for t in range(50000):
-    for i in range(0,len(data),100000000000000000000000000000):
-        length = min(100000000000000000000000000000,len(data)-i)
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-9)
+for t in range(100000):
+    for i in range(0,len(data),1000000000000):
+        length = min(1000000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -216,6 +214,6 @@ plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model.state_dict(), './model_x_more_full_state')
+torch.save(model.state_dict(), './model_y_more_full_state')
 
 print("halt")

@@ -189,7 +189,7 @@ plt.show()
 
 diff = []
 diff_per = []
-for i in range(len(x_tag)):
+for i in range(4,len(x_tag)):
     diff_temp = np.sqrt((x[i]-x_tag[i])**2+(y[i]-y_tag[i])**2)
     diff.append(diff_temp)
     diff_per.append(diff_temp/((i+0.0000000000000000000000001)*0.01*3))

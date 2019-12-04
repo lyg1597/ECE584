@@ -19,43 +19,6 @@ class TwoLayerNet(torch.nn.Module):
 
 
 delta_t = 0.01
-
-#############################
-data_straight = []
-input_straight = []
-output_straight = []
-for j in range(0,1):
-    for i in range(0,360,5):
-        data_temp = []
-        with open("./data/data_straight"+str(int(i))+"_"+str(int(j))+".dat") as file:
-            line = file.readline()
-            while line:
-                line = line.split(' ')
-                line = [float(i) for i in line]
-                data_temp.append(line)
-                line = file.readline()
-
-        input_temp = []
-        for i in range(0,len(data_temp)-1):
-            input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5],data_temp[i][6]])
-
-        output_temp = []
-        for i in range(1,len(data_temp)):
-            temp = []
-            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-            # temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
-            dtheta = ((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360)
-            if dtheta > 180:
-                dtheta = dtheta - 360
-            temp.append(dtheta)
-            output_temp.append(temp)
-
-        data_straight = data_straight + data_temp
-        input_straight = input_straight + input_temp
-        output_straight = output_straight + output_temp
-
-
 #############################
 data_pos = []
 input_pos = []
@@ -126,13 +89,45 @@ for k in range(0,1):
         output_neg = output_neg + output_temp
 
 #############################
+data_straight = []
+input_straight = []
+output_straight = []
+for j in range(0,1):
+    for i in range(0,360,5):
+        data_temp = []
+        with open("./data/data_straight"+str(int(i))+"_"+str(int(j))+".dat") as file:
+            line = file.readline()
+            while line:
+                line = line.split(' ')
+                line = [float(i) for i in line]
+                data_temp.append(line)
+                line = file.readline()
+
+        input_temp = []
+        for i in range(0,len(data_temp)-1):
+            input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5],data_temp[i][6]])
+
+        output_temp = []
+        for i in range(1,len(data_temp)):
+            temp = []
+            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append(((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360))
+            dtheta = ((data_temp[i][3]-data_temp[i-1][3])*180/(delta_t*np.pi))%int(360)
+            if dtheta > 180:
+                dtheta = dtheta - 360
+            temp.append(dtheta)
+            output_temp.append(temp)
+
+        data_straight = data_straight + data_temp
+        input_straight = input_straight + input_temp
+        output_straight = output_straight + output_temp
+#############################
+
 data = data_straight+data_pos+data_neg
 
 input_data = []
 output_data = []
-for i in range(len(input_straight)):
-    input_data.append(input_straight[i])
-    output_data.append(output_straight[i])
 
 for i in range(len(input_pos)):
     input_data.append(input_pos[i])
@@ -140,6 +135,10 @@ for i in range(len(input_pos)):
 
     output_data.append(output_pos[i])
     output_data.append(output_neg[i])
+
+for i in range(len(input_straight)):
+    input_data.append(input_straight[i])
+    output_data.append(output_straight[i])
 
 x = []
 y = []
@@ -161,8 +160,8 @@ for i in range(len(output_data)):
     # dy.append(output_data[i][0])
     dtheta.append(output_data[i][0])
 
-plt.plot(delta,dtheta,'bo')
-plt.show()    
+# plt.plot(delta,dtheta,'bo')
+# plt.show()    
 
 device = torch.device('cuda')
 
@@ -172,14 +171,15 @@ label = torch.FloatTensor(output_data)
 data = data.to(device)
 label = label.to(device)
 
-model = TwoLayerNet(len(data[0]),20,len(label[0]))
+model = TwoLayerNet(len(data[0]),100,len(label[0]))
+model.load_state_dict(torch.load('./model_theta_more_full_state'))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-10)
-for t in range(5000):
+optimizer = torch.optim.SGD(model.parameters(), lr=6e-9)
+for t in range(50000):
     for i in range(0,len(data),10000000000000):
         length = min(10000000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model

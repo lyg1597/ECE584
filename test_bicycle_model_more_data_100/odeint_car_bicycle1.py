@@ -60,5 +60,3 @@ for k in range(-3,4):
             file.write(str(a_const)+" ")
             file.write(str(delta_const)+"\n")
             
-
-

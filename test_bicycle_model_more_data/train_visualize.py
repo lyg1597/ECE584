@@ -97,11 +97,11 @@ for k in range(0,1):
         input_pos = input_pos + input_temp
         output_pos = output_pos + output_temp
 
-        # plt.plot(x_curve,y_curve)
-        # plt.title("Turning Angle delta_f="+str(int(j)))
-        # plt.xlabel("Position x")
-        # plt.ylabel("Position y")
-        # plt.show()
+        plt.plot(x_curve,y_curve)
+        plt.title("Turning Angle delta_f="+str(int(j)))
+        plt.xlabel("Position x")
+        plt.ylabel("Position y")
+        plt.show()
 
 #############################
 data_neg = []

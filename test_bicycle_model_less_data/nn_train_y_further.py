@@ -33,7 +33,7 @@ data_straight = []
 input_straight = []
 output_straight = []
 for j in range(0,1):
-    for i in range(0,360,5):
+    for i in range(30,31,5):
         data_temp = []
         with open("./data/data_straight"+str(int(i))+"_"+str(int(j))+".dat") as file:
             line = file.readline()
@@ -176,8 +176,9 @@ model = model.to(device)
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(5000):
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.995)
+for t in range(50000):
     for i in range(0,len(data),10000000000000):
         length = min(10000000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
@@ -191,6 +192,7 @@ for t in range(5000):
 
         loss.backward()
         optimizer.step()
+        scheduler.step()
 
     if(t%100 == 0):
         y_pred = model(data)

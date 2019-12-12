@@ -30,7 +30,7 @@
             "type": "python",
             "request": "launch",
             "cwd": "D:/1_Study/2_ECE584/project/test_bicycle_model_more_data",
-            "program": "D:/1_Study/2_ECE584/project/test_bicycle_model_more_data/2d_plot.py"
+            "program": "D:/1_Study/2_ECE584/project/test_bicycle_model_more_data/train_data_visualize.py"
         }
     ]
 }

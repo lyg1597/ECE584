@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+
+\bibitem{alur:tcs}
+Rajeev Alur and David~L. Dill.
+\newblock A theory of timed automata.
+\newblock {\em Theoretical Computer Science}, 126:183--235, 1994.
+
+\bibitem{FanQM017}
+Chuchu Fan, Bolun Qi, Sayan Mitra, and Mahesh Viswanathan.
+\newblock {DryVR}: Data-driven verification and compositional reasoning for
+  automotive systems.
+\newblock In {\em Proc. 19th Int. Conf. Computer Aided, {CAV}, Part {I}}, pages
+  441--461, 2017.
+
+\end{thebibliography}

@@ -1,0 +1,23 @@
+automaton $\auto{RimlessWheel}(\alpha,\mu:\Real, n:\ioaNat)$
+	const $\beta: \Real := 2\pi/n$;
+	types $Spokes:$ enumeration [1,...,n]; 
+	signature
+		internal $\act{impact}$;
+		
+	variables
+		internal $\theta:\Real := 0$;
+			$\omega:\Real := 0$;
+			$pivot:Spokes :=1$;
+	
+	transitions
+		internal $\act{impact}$
+			pre $\theta \geq \beta/2$
+			eff $pivot := pivot + 1 \mod n$;
+				$\theta := - \beta/2$;
+				$\omega := \mu \omega$;
+	
+	trajectories
+		mode $\smodel{swing}$
+			$d(\theta) = \omega$;				$\lnlabel{rimless_diffeq_theta}$
+			$d(\omega) = sin(\theta + \alpha)$; $\lnlabel{rimless_diffeq_omega}$
+			invariant $\theta \leq \beta/2$

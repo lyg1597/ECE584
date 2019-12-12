@@ -1,0 +1,242 @@
+\documentclass[11pt]{article}
+
+% This is a package for drawing figures
+% it is a part of standard latex 2e distribution
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usepackage{fullpage}
+
+
+\usepackage{palatino}
+\RequirePackage{ifthen}
+\usepackage{latexsym}
+\RequirePackage{amsmath}
+\RequirePackage{amsthm}
+\RequirePackage{amssymb}
+\RequirePackage{xspace}
+\RequirePackage{graphics}
+\usepackage{xcolor}
+
+
+
+
+\RequirePackage{textcomp}
+\usepackage{keyval}
+%\usepackage{listings}
+\usepackage{xspace}
+\usepackage{mathrsfs,paralist, amsmath,amssymb,url,listings,mathrsfs}
+%\usepackage{pvs}
+%\usepackage{supertabular,alltt,latexsym}
+%\usepackage{multicol,multirow,epsfig}
+%\usepackage[dvips, usenames]{color}
+\usepackage{framed}
+\usepackage{lipsum}
+%\usepackage[dvipsnames]{color}
+
+% copyright notice
+
+
+\definecolor{reddish}{rgb}{1,.8,0.8}
+\definecolor{blueish}{rgb}{0.8,.8,1}
+\definecolor{greenish}{rgb}{.8,1,0.8}
+\definecolor{yellowish}{rgb}{1,1,.20}
+
+
+\usepackage[pdftex]{hyperref}
+\hypersetup{
+  pdftitle={Lecture notes for Modeling and Verification of Real-time and Hybrid Systems},
+  pdfauthor={Sayan Mitra},
+  colorlinks=true,
+  citecolor={blue},
+  linkcolor = {blue},
+  pagecolor={blue},
+  backref={true},
+  bookmarks=true,
+  bookmarksopen=false,
+  bookmarksnumbered=true
+}
+
+%\newcommand{\remove}[1]{}
+
+\input{prelude1}
+
+
+\newcommand{\handout}[6]{
+  \noindent
+  \begin{center}
+  \framebox{
+    \vbox{
+      \hbox to 5.78in { {\bf ECE/CS 584: Embedded and CPS  Verification } \hfill #2 }
+      \vspace{4mm}
+      \hbox to 5.78in { {\Large \hfill #5  \hfill} }
+      \vspace{2mm}
+       \hbox to 5.78in { {\Large \hfill #6  \hfill} }
+      \vspace{2mm}
+      \hbox to 5.78in { {\em #3 \hfill #4} }
+    }
+  }
+  \end{center}
+  \vspace*{4mm}
+}
+
+\newcommand{\smallheader}[4]{
+  \noindent
+  \begin{center}
+  \framebox{
+    \vbox{
+      \hbox to 5.78in { {\bf ECE/CS 584: Embedded and CPS System Verification } \hfill #2 }
+      \vspace{2mm}
+      \hbox to 5.78in { {\em #3 \hfill #4} }
+    }
+  }
+  \end{center}
+  \vspace*{4mm}
+}
+
+\newcommand{\lecture}[4]{\handout{#1}{#2}{#3}{Scribe: #4}{Lecture #1}}
+
+\newcommand{\homework}[2]{\smallheader{#1}{Fall 2017}{Homework #1}{#2}}
+\newcommand{\solution}[2]{\smallheader{#1}{Fall 2017}{Solutions for Homework #1}{#2}}
+
+
+\newcommand{\interestingfact}[1]{
+	\noindent
+	\begin{center}
+	\colorbox{yellowish}{
+	\parbox{11.5cm}{{\bf Factoid.} #1}
+	}
+	\end{center}
+	\vspace*{4mm}
+}
+%\definecolor{MyGray}{rgb}{0.96,0.97,0.98}
+\makeatletter\newenvironment{color1box}{%
+   \begin{lrbox}{\@tempboxa}\begin{minipage}{\columnwidth}}{\end{minipage}\end{lrbox}%
+   \colorbox{reddish}{\usebox{\@tempboxa}}
+}\makeatother
+
+
+\makeatletter\newenvironment{color3box}{%
+   \begin{lrbox}{\@tempboxa}\begin{minipage}{\columnwidth}}{\end{minipage}\end{lrbox}%
+   \colorbox{blueish}{\usebox{\@tempboxa}}
+}\makeatother
+
+% 1-inch margins, from fullpage.sty by H.Partl, Version 2, Dec. 15, 1988.
+\topmargin 0pt
+\advance \topmargin by -\headheight
+\advance \topmargin by -\headsep
+\textheight 8.9in
+\oddsidemargin 0pt
+\evensidemargin \oddsidemargin
+\marginparwidth 0.5in
+\textwidth 6.5in
+
+\parindent 0in
+\parskip 1.5ex
+%\renewcommand{\baselinestretch}{1.25}
+
+\begin{document}
+\title{Title of my ECE/CS584 class project on an interesting problem}
+\author{My name\\ 
+	My affiliations \\
+	Address \\
+	\href{mailto:me@illinois.edu}{me@illinois.edu}}
+% If you omit the next line then a date will appear
+\date{}
+\maketitle
+
+
+\begin{abstract}
+	Write an abstract.
+\end{abstract}
+
+%\homework{2 on Discrete and Hybrid Models--- Due on October $9^{th}$, 2016}{Your name}
+
+\section{Introduction}
+\label{sec:intro}
+
+Start with a succinct motivation for the problem. You can assume the reader to be a graduate of this class. 
+
+Describe the problem. 
+
+State the contributions. Perhaps as an itemized list, if that's your style:
+\begin{itemize}
+	\item We formulated a new problem ...
+	\item We show that ....
+	\item We implemented .... and demonstrated its effectiveness in...
+\end{itemize}
+Speaking of style, you can make text {\bf bold\/}, {\em italicized\/}, {\underline{underlined}}, and even \textcolor{blue}{colored}. You can change the font to {\sf this}, {\texttt{this}},or $\mathit{this}$, among many others. But, these are distracting for the reader and avoid them unless you know exactly what you are doing.
+
+Briefly reflect on the impact of the work and possible future direction. 
+
+Describe the organization of the rest of the paper. 
+In Section~\ref{sec:related} we present a discussion of the related work in timed automata and syntax-guided synthesis. In Section~\ref{sec:system} we present a formal model of the system. And so on.
+
+\section{Related work}
+\label{sec:related}
+Here is a nice paper~\cite{FanQM017} by some people I know. If there are several lines of related works, it is always a good idea to split them into paragraphs like these:
+
+\paragraph{Timed automata} Some astute observations about related work on timed automata~\cite{alur:tcs}. Works best if the existing work is contrasted with the proposed approaches and results.
+
+\paragraph{Syntax-guided synthesis} Here is some related work on synthesis. 
+
+
+\section{Preliminaries and Problem Formulation}
+\label{sec:prelims}
+This is the section where you start the mathematical development. Introduce basic notations. Many are defined for you in the {\sf prelude1.tex} file. For example, $\reals$, $\naturals$, $\nnreals$. 
+
+You can use definitions, propositions in special  environments that make them easier to read and refer to. For example,
+
+\begin{definition}
+A positive definite function $V:\reals^n \rightarrow \reals$ is a {\em Lyapunov function} iff $\ldots$.
+\end{definition}
+
+We shall use the following well-known result from~\cite{alur:tcs}.
+\begin{theorem}
+	A positive definite function $V:\reals^n \rightarrow \reals$ is a {\em Lyapunov function} iff $\ldots$.
+\end{theorem}
+
+At some point arrive at a  precise problem statement. For less mathematical papers, you may not need that many definitions and symbols, but still there should be a clear problem statement.
+
+\begin{figure}[!ht]
+	\label{fig:rimlesswheel}
+	\centering
+	\mybox{\linewidth}{\linewidth}{
+		\lstinputlisting[language=ioaNums,numbersep=-3pt]{rimlesswheel.hioa}
+		\hfill
+		\caption{\scriptsize HIOA model of rimless wheel.}
+	}
+\end{figure}
+
+\section{System Model}
+\label{sec:system}
+You may have a section where you present a new system model. There are many different ways of showing specifications using the IOAlanguage style defined in {\sf prelude1.tex}. You can even write your own language styles in \LaTeX. Here is just one example shown for you in Figure~\ref{fig:rimlesswheel}.
+
+
+
+\section{A Section on Algorithms}
+\label{sec:algo}
+
+\section{A Section on Analysis}
+\label{sec:analysis}
+
+\section{A Section on Implementation, testbed, and design}
+\label{sec:design}
+
+\section{Experimental Results}
+\label{sec:experiments}
+Figure~\ref{fig:quanser} is an interesting figure. You can embed pdf, jpg, and other types of figures directly. There are many different ways of formatting and placing figures in a \LaTeX document. Try, for example, the  versatile {\sf wrapfigure} package if you are running out of space. Beware, the position of figures is determined by the \LaTeX compiler, often with surprising results.
+\begin{figure}[!ht]
+	\label{fig:quanser}
+	\centering
+	\includegraphics[scale=0.3]{quanser.pdf}
+		\caption{\scriptsize A picture of the desktop helicopter testbed.}
+\end{figure}
+\section{Conclusions}
+\label{sec:conc}
+What was done? How did it advance the state of the art or the state of our knowledge? Why was it interesting? 
+
+What are the future directions?
+
+\bibliography{mybibfile}
+\bibliographystyle{plain}
+\end{document}

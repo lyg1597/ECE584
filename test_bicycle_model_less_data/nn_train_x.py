@@ -4,6 +4,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 # [pos_x,pos_y,orientation,forward_speed,input_acceleration,input_turning]
+SEED = 123456
 
 class TwoLayerNet(torch.nn.Module):
     def __init__(self,D_in,H1,D_out):
@@ -33,7 +34,7 @@ data_straight = []
 input_straight = []
 output_straight = []
 for j in range(0,1):
-    for i in range(0,360,5):
+    for i in range(30,31,5):
         data_temp = []
         with open("./data/data_straight"+str(int(i))+"_"+str(int(j))+".dat") as file:
             line = file.readline()
@@ -50,8 +51,8 @@ for j in range(0,1):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
         # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
@@ -82,8 +83,8 @@ for k in range(0,1):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -113,8 +114,8 @@ for k in range(0,1):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -154,11 +155,11 @@ dx = []
 dy = []
 dtheta = []
 for i in range(len(output_data)):
-    # dx.append(output_data[i][0])
-    dy.append(output_data[i][0])
+    dx.append(output_data[i][0])
+    # dy.append(output_data[i][0])
     # dtheta.append(output_data[i][2])
 
-plt.plot(theta,dy,'bo')
+plt.plot(theta,dx,'bo')
 plt.show()    
 
 device = torch.device('cuda')
@@ -170,35 +171,45 @@ data = data.to(device)
 label = label.to(device)
 
 model = TwoLayerNet(len(data[0]),20,len(label[0]))
-model.load_state_dict(torch.load('./model_y_more_full_state'))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(5000):
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.995)
+for t in range(20000):
     for i in range(0,len(data),10000000000000):
         length = min(10000000000000,len(data)-i)
-        # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
-
-        # Compute and print loss
         loss = criterion(y_pred, label[i:i+length])
-        
-        # Zero gradients, perform a backward pass, and update the weights.
         optimizer.zero_grad()
-
         loss.backward()
         optimizer.step()
-
+        scheduler.step()
     if(t%100 == 0):
         y_pred = model(data)
+        loss = criterion(y_pred, label)
+        print(t,loss.item())
 
-        # Compute and print loss
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.995)
+for t in range(20000):
+    for i in range(0,len(data),10000000000000):
+        length = min(10000000000000,len(data)-i)
+        y_pred = model(data[i:i+length])
+        loss = criterion(y_pred, label[i:i+length])
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        scheduler.step()
+    if(t%100 == 0):
+        y_pred = model(data)
         loss = criterion(y_pred, label)
         print(t,loss.item())
 ###########################
+torch.save(model.state_dict(), './model_x_more_full_state')
+
 y_pred = model(data)
 y_pred = y_pred.cpu()
 y_pred_li= y_pred.tolist()
@@ -215,6 +226,5 @@ plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model.state_dict(), './model_y_more_full_state')
 
 print("halt")

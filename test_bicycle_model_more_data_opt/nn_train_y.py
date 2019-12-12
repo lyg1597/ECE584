@@ -3,6 +3,7 @@ import torch
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+SEED = 1237890
 # [pos_x,pos_y,orientation,forward_speed,input_acceleration,input_turning]
 
 class TwoLayerNet(torch.nn.Module):
@@ -43,21 +44,21 @@ for j in range(0,1):
                 data_temp.append(line)
                 line = file.readline()
 
-    input_temp = []
-    for i in range(0,len(data_temp)-1):
-        input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5],data_temp[i][6]])
+        input_temp = []
+        for i in range(0,len(data_temp)-1):
+            input_temp.append([(data_temp[i][3]*180/np.pi) % int(360),data_temp[i][4],data_temp[i][5],data_temp[i][6]])
 
-    output_temp = []
-    for i in range(1,len(data_temp)):
-        temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
-        # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
-        output_temp.append(temp)
+        output_temp = []
+        for i in range(1,len(data_temp)):
+            temp = []
+            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
+            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
+            output_temp.append(temp)
 
-    data_straight = data_straight + data_temp
-    input_straight = input_straight + input_temp
-    output_straight = output_straight + output_temp
+        data_straight = data_straight + data_temp
+        input_straight = input_straight + input_temp
+        output_straight = output_straight + output_temp
 
 
 #############################
@@ -170,16 +171,25 @@ data = data.to(device)
 label = label.to(device)
 
 model = TwoLayerNet(len(data[0]),20,len(label[0]))
-model.load_state_dict(torch.load('./model_y_more_full_state'))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(5000):
-    for i in range(0,len(data),10000000000000):
-        length = min(10000000000000,len(data)-i)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.995)
+for t in range(20000):
+    # c = list(zip(input_data, output_data))
+    # random.seed(SEED)
+    # random.shuffle(c)
+    # data, label = zip(*c)
+    # data = torch.FloatTensor(data)
+    # label = torch.FloatTensor(label)
+
+    # data = data.to(device)
+    # label = label.to(device)
+    for i in range(0,len(data),1000000000000):
+        length = min(1000000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
         y_pred = model(data[i:i+length])
 
@@ -191,6 +201,7 @@ for t in range(5000):
 
         loss.backward()
         optimizer.step()
+        scheduler.step()
 
     if(t%100 == 0):
         y_pred = model(data)
@@ -199,6 +210,9 @@ for t in range(5000):
         loss = criterion(y_pred, label)
         print(t,loss.item())
 ###########################
+
+torch.save(model.state_dict(), './model_y_more_full_state')
+
 y_pred = model(data)
 y_pred = y_pred.cpu()
 y_pred_li= y_pred.tolist()
@@ -215,6 +229,5 @@ plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model.state_dict(), './model_y_more_full_state')
 
 print("halt")

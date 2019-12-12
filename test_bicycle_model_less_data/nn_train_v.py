@@ -33,7 +33,7 @@ data_straight = []
 input_straight = []
 output_straight = []
 for j in range(0,1):
-    for i in range(0,360,5):
+    for i in range(30,31,5):
         data_temp = []
         with open("./data/data_straight"+str(int(i))+"_"+str(int(j))+".dat") as file:
             line = file.readline()
@@ -50,8 +50,8 @@ for j in range(0,1):
     output_temp = []
     for i in range(1,len(data_temp)):
         temp = []
-        # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-        temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+        temp.append((data_temp[i][4]-data_temp[i-1][4])/delta_t)
+        # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
         # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
         output_temp.append(temp)
 
@@ -82,8 +82,8 @@ for k in range(0,1):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            temp.append((data_temp[i][4]-data_temp[i-1][4])/delta_t)
+            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -113,8 +113,8 @@ for k in range(0,1):
         output_temp = []
         for i in range(1,len(data_temp)):
             temp = []
-            # temp.append((data_temp[i][1]-data_temp[i-1][1])/delta_t)
-            temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
+            temp.append((data_temp[i][4]-data_temp[i-1][4])/delta_t)
+            # temp.append((data_temp[i][2]-data_temp[i-1][2])/delta_t)
             # temp.append(((data_temp[i][3]-data_temp[i-1][3])/delta_t)%int(360))
             output_temp.append(temp)
 
@@ -146,7 +146,7 @@ delta = []
 for i in range(len(input_data)):
     # x.append(input_data[i][0])
     # y.append(input_data[i][1])
-    theta.append(input_data[i][0]+180*np.arctan(Lr/(Lr+Lf) * np.sin(input_data[i][3]*np.pi/180)/np.cos(input_data[i][3]*np.pi/180))/np.pi)
+    theta.append(input_data[i][2])
     # v.append(input_data[i][3])
     # v.append(input_data[i][4])
 
@@ -154,11 +154,11 @@ dx = []
 dy = []
 dtheta = []
 for i in range(len(output_data)):
-    # dx.append(output_data[i][0])
-    dy.append(output_data[i][0])
+    dx.append(output_data[i][0])
+    # dy.append(output_data[i][0])
     # dtheta.append(output_data[i][2])
 
-plt.plot(theta,dy,'bo')
+plt.plot(theta,dx,'bo')
 plt.show()    
 
 device = torch.device('cuda')
@@ -170,14 +170,14 @@ data = data.to(device)
 label = label.to(device)
 
 model = TwoLayerNet(len(data[0]),20,len(label[0]))
-model.load_state_dict(torch.load('./model_y_more_full_state'))
 model = model.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
 criterion = criterion.to(device)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-8)
-for t in range(5000):
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.995)
+for t in range(20000):
     for i in range(0,len(data),10000000000000):
         length = min(10000000000000,len(data)-i)
         # Forward pass: Compute predicted y by passing x to the model
@@ -191,7 +191,31 @@ for t in range(5000):
 
         loss.backward()
         optimizer.step()
+        scheduler.step()
+    if(t%100 == 0):
+        y_pred = model(data)
 
+        # Compute and print loss
+        loss = criterion(y_pred, label)
+        print(t,loss.item())
+
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.995)
+for t in range(20000):
+    for i in range(0,len(data),10000000000000):
+        length = min(10000000000000,len(data)-i)
+        # Forward pass: Compute predicted y by passing x to the model
+        y_pred = model(data[i:i+length])
+
+        # Compute and print loss
+        loss = criterion(y_pred, label[i:i+length])
+        
+        # Zero gradients, perform a backward pass, and update the weights.
+        optimizer.zero_grad()
+
+        loss.backward()
+        optimizer.step()
+        scheduler.step()
     if(t%100 == 0):
         y_pred = model(data)
 
@@ -210,11 +234,11 @@ y = [i[0] for i in y_li]
 
 x = data.cpu()
 x_li = x.tolist()
-x = [i[0]+180*np.arctan(Lr/(Lr+Lf) * np.sin(i[3]*np.pi/180)/np.cos(i[3]*np.pi/180))/np.pi for i in x_li]
+x = [i[2] for i in x_li]
 plt.plot(x,y_pred,'ro')
 plt.plot(x,y,'bo')
 plt.show()
 
-torch.save(model.state_dict(), './model_y_more_full_state')
+torch.save(model.state_dict(), './model_v_more_full_state')
 
 print("halt")

@@ -35,7 +35,7 @@ target_v = 1
 k1 = -4
 
 model = TwoLayerNet(2,100,1)
-model.load_state_dict(torch.load('./model_delta'))
+model.load_state_dict(torch.load('./model_controller'))
 
 
 def getIp(curr_x, curr_y, curr_theta):

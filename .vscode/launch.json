@@ -5,11 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Vehicle Model",
+            "name": "Python: Train Vehicle",
             "type": "python",
             "request": "launch",
-            "program": "/home/younger/research_code/test_2_19/nn_train_vehicle_x.py",
-            "cwd": "/home/younger/research_code/test_2_19",
+            "program": "D:/1_Study/3_Research/test_2_19/nn_train_vehicle_2_y.py",
+            "cwd": "D:/1_Study/3_Research/test_2_19",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Test Vehicle",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_2_19/nn_test_vehicle.py",
+            "cwd": "D:/1_Study/3_Research/test_2_19",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Test Together",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_2_19/nn_test_together.py",
+            "cwd": "D:/1_Study/3_Research/test_2_19",
             "console": "integratedTerminal"
         }
     ]

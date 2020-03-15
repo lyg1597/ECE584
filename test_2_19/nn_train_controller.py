@@ -36,7 +36,7 @@ for j in range(0,2):
                 dist = np.sqrt((curr_x-target_x)**2+(curr_y-target_y)**2)
                 error_x = target_x-curr_x
                 error_y = target_y-curr_y
-                angle = curr_theta - np.arctan2(error_y,error_x)
+                angle = (curr_theta - np.arctan2(error_y,error_x))%(np.pi*2)
                 input_data.append([angle,dist])
                 output_data.append([delta])
                 line = file.readline()
@@ -75,6 +75,6 @@ for t in range(100000):
         loss = criterion(y_pred, label)
         print(t,loss.item())
 
-torch.save(model.state_dict(), './model_delta')
+torch.save(model.state_dict(), './model_controller')
 
 print("halt")

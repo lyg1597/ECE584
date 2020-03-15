@@ -90,8 +90,6 @@ x = []
 y = []
 time = []
 theta = []
-delta = []
-v = []
 
 curr_x = x_init
 curr_y = y_init
@@ -101,9 +99,6 @@ while np.sqrt((target_x-curr_x)**2+(target_y-curr_y)**2) > 0.01 and r.t<time_hor
     y.append(curr_y)
     theta.append(curr_theta)
     time.append(r.t)
-    control = getIp(curr_x, curr_y, curr_theta)
-    delta.append(control[1])
-    v.append(control[0])
 
     val = r.integrate(r.t + dt)
 

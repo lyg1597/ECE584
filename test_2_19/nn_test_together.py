@@ -26,7 +26,7 @@ v_const = 3
 Lr = 2
 Lf = 2
 
-target_x = 17
+target_x = 0
 target_y = 0
 target_theta = 0
 target_w = 0
@@ -93,10 +93,10 @@ def func1(t,vars):
     return [dx,dy,dtheta]
 
 
-x_init = 0
+x_init = -15
 y_init = 0
-theta_init = 160*np.pi/180
-initR = [y_init,x_init,theta_init]
+theta_init = -160*np.pi/180
+initR = [x_init,y_init,theta_init]
 r = ode(func1)
 r.set_initial_value(initR)
 dt = 0.01

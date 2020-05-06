@@ -19,13 +19,13 @@ class TwoLayerNet(torch.nn.Module):
         return y
 
 delta_t = 0.01
-delta_const = -30*np.pi/180
+delta_const = 45*np.pi/180
 init_v = 0.25
 # a_const = 0
 time_horizon = 50
 init_x = 0
 init_y = 0
-init_theta = 0
+init_theta = -170*np.pi/180
 Lr = 2
 Lf = 2
 # 312

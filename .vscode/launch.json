@@ -8,7 +8,7 @@
             "name": "Python: Train Vehicle",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/3_Research/test_2_19/nn_train_vehicle_2_y.py",
+            "program": "D:/1_Study/3_Research/test_2_19/nn_train_vehicle_y.py",
             "cwd": "D:/1_Study/3_Research/test_2_19",
             "console": "integratedTerminal"
         },
@@ -21,11 +21,43 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Python: Test Vehicle2",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_2_19/nn_test_vehicle2.py",
+            "cwd": "D:/1_Study/3_Research/test_2_19",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python: Test Together",
             "type": "python",
             "request": "launch",
             "program": "D:/1_Study/3_Research/test_2_19/nn_test_together.py",
             "cwd": "D:/1_Study/3_Research/test_2_19",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: New Controller",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_new_controller.py",
+            "cwd": "D:/1_Study/3_Research/test_4_10",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: New Controller Symmetry",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_new_controller_symmetry.py",
+            "cwd": "D:/1_Study/3_Research/test_4_10",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Test",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test.py",
+            "cwd": "D:/1_Study/3_Research",
             "console": "integratedTerminal"
         }
     ]

@@ -45,6 +45,14 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Python: New Controller Reverse",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_new_controller_reverse.py",
+            "cwd": "D:/1_Study/3_Research/test_4_10",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python: New Controller Symmetry",
             "type": "python",
             "request": "launch",
@@ -53,11 +61,19 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python: Test",
+            "name": "Python: Descripancy function",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/3_Research/test.py",
-            "cwd": "D:/1_Study/3_Research",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_descripancy.py",
+            "cwd": "D:/1_Study/3_Research/test_4_10/",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Test Controller Reverse",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_test_controller_reverse.py",
+            "cwd": "D:/1_Study/3_Research/test_4_10/",
             "console": "integratedTerminal"
         }
     ]

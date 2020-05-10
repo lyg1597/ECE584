@@ -61,7 +61,7 @@ for i in range(pos_ref.shape[0]):
     eref.append([0,0,i*0.01])
 
 model = TwoLayerNet(4,100)
-model.load_state_dict(torch.load('./model_controller'))
+model.load_state_dict(torch.load('./model_controller_reverse'))
 
 plt.figure(1)
 plt.figure(2)
@@ -79,13 +79,17 @@ delta_list = []
 x_init = 0
 y_init = 0
 theta_init = 0
-for i in range(30):
-    x_init = np.random.uniform(-15.1,-14.9)
-    y_init = np.random.uniform(-0.1,0.1)
+for i in range(1):
+    # x_init = np.random.uniform(-15.1,-14.9)
+    # y_init = np.random.uniform(-0.1,0.1)
     # x_init = -15
     # y_init = 0
     # theta_init = 0
-    theta_init = np.random.uniform(-np.pi,np.pi)
+    # theta_init = np.random.uniform(-np.pi,np.pi)
+    x_init = -15.035501572777616
+    y_init = -0.21866303126396303
+    theta_init = 1.3219800807415432
+
     print("initial",x_init,y_init,theta_init*180/np.pi)
 
     trajectory = [[0,x_init,y_init,theta_init]]
@@ -138,7 +142,7 @@ for i in range(30):
 
     plt.figure(1)
     plt.plot(x,y,'b')
-    # plt.plot(x,y,'g.')
+    plt.plot(x,y,'g.')
     plt.plot(x_init,y_init,'r.')
 
     plt.figure(2)

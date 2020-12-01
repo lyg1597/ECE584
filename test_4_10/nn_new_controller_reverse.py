@@ -9,21 +9,23 @@ class TwoLayerNet(torch.nn.Module):
         # self.linear1 = torch.nn.Linear(D_in, H1)
         # self.linear2 = torch.nn.Linear(H1, 1)
         self.control1 = torch.nn.Linear(D_in,H1)
-        self.control2 = torch.nn.Linear(H1,2)
+        self.control2 = torch.nn.Linear(H1,H1)
+        self.control3 = torch.nn.Linear(H1,2)
 
     def forward(self,x):
         # h1 = torch.nn.functional.relu(self.linear1(x))
         # # h2 = torch.nn.functional.relu(self.linear2(h1))
         # y = self.linear2(h1)
 
-        h2 = torch.relu(self.control1(x))
-        u = self.control2(h2)
+        h1 = torch.relu(self.control1(x))
+        h2 = torch.relu(self.control2(h1))
+        u = self.control3(h2)
         return u
 
 Lr = 2
 Lf = 2
 dt = 0.01
-n_sample = 10000
+n_sample = 1000
 n_counter = 50
 
 def func1(t,vars,args):
@@ -50,11 +52,10 @@ def func1(t,vars,args):
     return [dx,dy,dtheta]
 
 def Df(t):
-    dx = 3*np.exp(-0.8*t)
+    dx = 2*np.exp(-0.8*t)
     dy = 3*np.exp(-0.5*t)
     dtheta = np.pi
-    dsintheta = np.exp(-0.6*x)
-    return dx,dy,dtheta,dsintheta
+    return dx,dy,dtheta
 
 v_ref = 0.05
 pos_ref = np.arange(-15,0.01,v_ref)
@@ -71,11 +72,6 @@ input_data = []
 ref_x = []
 ref_y = []
 ref_theta = []
-ref_thetasin = []
-dx_ref = []
-dy_ref = []
-dtheta_ref = []
-dsintheta_ref = []
 for i in range(len(ref)-1):
     for j in range(n_sample):
         # if j < 1000:
@@ -84,7 +80,7 @@ for i in range(len(ref)-1):
         #     theta = ref[i][2]        
         # else:
         t = i*0.01
-        dx,dy,dtheta,dsintheta = Df(t)
+        dx,dy,dtheta = Df(t)
         x = np.random.uniform(ref[i][0]-dx,ref[i][0]+dx)
         y = np.random.uniform(ref[i][1]-dy,ref[i][1]+dy)
         theta = np.random.uniform(ref[i][2]-dtheta,ref[i][2]+dtheta)
@@ -97,7 +93,6 @@ for i in range(len(ref)-1):
         ref_x.append(ref[i+1][0])
         ref_y.append(ref[i+1][1])
         ref_theta.append(ref[i+1][2])
-        ref_thetasin.append(np.sin(ref[i+1][2]))
         
         next_x_ref = ref[i+1][0]
         next_y_ref = ref[i+1][1]
@@ -110,12 +105,6 @@ for i in range(len(ref)-1):
         error_theta_sin = np.sin(error_theta)
         input_data.append([error_x,error_y,error_theta_cos,error_theta_sin])
     
-        dx_next,dy_next,dtheta_next,dsintheta_next = Df(t)
-        dx_ref.append(dx_next)
-        dy_ref.append(dy_next)
-        dtheta_ref.append(dtheta_next)
-        dsintheta_ref.append(dsintheta_next)
-
 # for i in range(n_sample):
 #     x = np.random.uniform(-0.01-3,-0.01+3)
 #     y = np.random.uniform(0-3,0+3)
@@ -141,7 +130,7 @@ for i in range(len(ref)-1):
 
 
 device = torch.device('cuda')
-model = TwoLayerNet(4,100)
+model = TwoLayerNet(4,200)
 model = model.to(device)
 
 x_tensor = torch.FloatTensor(sample_x)
@@ -157,25 +146,14 @@ ref_y_tensor = torch.FloatTensor(ref_y)
 ref_y_tensor = ref_y_tensor.to(device)
 ref_theta_tensor = torch.FloatTensor(ref_theta)
 ref_theta_tensor = ref_theta_tensor.to(device)
-ref_thetasin_tensor = torch.FloatTensor(ref_thetasin)
-ref_thetasin_tensor = ref_thetasin_tensor.to(device)
-
-dx_ref_tensor = torch.FloatTensor(dx_ref)
-dx_ref_tensor = dx_ref_tensor.to(device)
-dy_ref_tensor = torch.FloatTensor(dy_ref)
-dy_ref_tensor = dy_ref_tensor.to(device)
-dtheta_ref_tensor = torch.FloatTensor(dtheta_ref)
-dtheta_ref_tensor = dtheta_ref_tensor.to(device)
-dsintheta_ref_tensor = torch.FloatTensor(dsintheta_ref)
-dsintheta_ref_tensor = dsintheta_ref_tensor.to(device)
 
 data = torch.FloatTensor(input_data)
 data = data.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-1, weight_decay=1e-5)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-5)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.995)
 
 for j in range(0,1):
-    for i in range(0,2500):
+    for i in range(0,20000):
         control_tensor = model(data)
         vr = torch.clamp(control_tensor[:,0],-30,30)
         delta = torch.clamp(control_tensor[:,1],-np.pi/4,np.pi/4)
@@ -192,10 +170,9 @@ for j in range(0,1):
         # error_theta = (torch.sin(new_theta_tensor) - torch.sin(ref_theta_tensor))**2
         error_theta = (torch.sin(new_theta_tensor-ref_theta_tensor))**2
         error_over = (torch.sign(new_x_tensor-ref_x_tensor)*torch.sign(x_tensor-ref_x_tensor)-1)**2
-        error_constraint = torch.relu()
+        error_constraint = torch.relu(torch.sign(-data[:,1]*delta))
 
-
-        error = error_pos
+        error = error_pos+error_theta*0.0
         # error = error_theta*10
         # error_x = torch.abs(ref_x_tensor - new_x_tensor)
         # error_y = torch.abs(ref_y_tensor - new_y_tensor)
@@ -203,7 +180,7 @@ for j in range(0,1):
         # error = error_x+error_y+error_diff
         loss = error.mean()
         if i%10 == 0:
-            print(i,loss.item(),error_pos.mean().item(),error_theta.mean().item())
+            print(i,loss.item(),error_pos.mean().item(),error_theta.mean().item(),error_constraint.mean().item())
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -279,57 +256,49 @@ for j in range(0,1):
 print(data.shape)
 device = torch.device('cpu')
 model = model.to(device)
-for i in range(30):
-    x_init = np.random.uniform(-16,-14)
-    y_init = np.random.uniform(-1,1)
-    # x_init = -15
-    # y_init = 0
-    # theta_init = 0
-    theta_init = np.random.uniform(-np.pi/2,np.pi/2)
-    # x_init = -15.306675737416832
-    # y_init = 0.78897938091005
-    # theta_init = -1.0121347547258441
+x_init = np.random.uniform(-16,-14)
+y_init = np.random.uniform(-1,1)
+# x_init = -15
+# y_init = 0
+theta_init = np.random.uniform(-np.pi,np.pi)
+# theta_init = -np.pi*3/4
 
-    trajectory = [[0,x_init,y_init,theta_init]]
-    r = ode(func1)
-    r.set_initial_value([x_init,y_init,theta_init])
+trajectory = [[0,x_init,y_init,theta_init]]
+r = ode(func1)
+r.set_initial_value([x_init,y_init,theta_init])
 
-    for i in range(len(ref)-1):
-        error_x = ref[i+1][0]-trajectory[i][1]
-        error_y = ref[i+1][1]-trajectory[i][2]
-        error_theta = (ref[i+1][2]-trajectory[i][3])%(np.pi*2)
-        error_theta_cos = np.cos(error_theta)
-        error_theta_sin = np.sin(error_theta)
+for i in range(len(ref)-1):
+    error_x = ref[i+1][0]-trajectory[i][1]
+    error_y = ref[i+1][1]-trajectory[i][2]
+    error_theta = (ref[i+1][2]-trajectory[i][3])%(np.pi*2)
+    error_theta_cos = np.cos(error_theta)
+    error_theta_sin = np.sin(error_theta)
 
-        data = torch.FloatTensor([error_x,error_y,error_theta_cos,error_theta_sin])
-        u = model(data)
-        vr = u[0].item()
-        delta = u[1].item()
+    data = torch.FloatTensor([error_x,error_y,error_theta_cos,error_theta_sin])
+    u = model(data)
+    vr = u[0].item()
+    delta = u[1].item()
 
-        r.set_f_params([vr,delta])
-        val = r.integrate(r.t+0.01)
+    r.set_f_params([vr,delta])
+    val = r.integrate(r.t+0.01)
 
-        if np.abs(val[1])>2 or val[0]<-17:
-            print("Error, stop!")
+    trajectory.append([r.t,val[0],val[1],val[2]])
+    error_pos = np.sqrt((val[0]-ref[i+1][0])**2+(val[1]-ref[i+1][1])**2)
+    
+    print(i,vr,delta,error_pos,error_x,error_y,error_theta)
 
-        trajectory.append([r.t,val[0],val[1],val[2]])
-        error_pos = np.sqrt((val[0]-ref[i+1][0])**2+(val[1]-ref[i+1][1])**2)
-        
+x = []
+y = []
+for i in range(len(trajectory)):
+    x.append(trajectory[i][1])
+    y.append(trajectory[i][2])
 
-        print(i,vr,delta,error_pos,error_x,error_y,error_theta)
-
-    x = []
-    y = []
-    for i in range(len(trajectory)):
-        x.append(trajectory[i][1])
-        y.append(trajectory[i][2])
-
-    plt.plot(x,y)
-    plt.plot(x,y,'.')
+plt.plot(x,y)
+plt.plot(x,y,'.')
 
 plt.show()
 
-torch.save(model.state_dict(), './model_controller_reverse')
+# torch.save(model.state_dict(), './model_controller')
 
 
 new_x_tensor = new_x_tensor.to(device)
@@ -344,7 +313,7 @@ theta_end = new_theta_tensor.tolist()
 #     plt.plot(sample_x[i]-ref_x[i],sample_y[i]-ref_y[i],'g.')
 #     plt.plot(x_end[i]-ref_x[i],y_end[i]-ref_y[i],'r.')
 
-# plt.plot(sample_x,sample_y,'b.')
+plt.plot(sample_x,sample_y,'b.')
 
-# plt.plot(0,0,'y.')
-# plt.show()
+plt.plot(0,0,'y.')
+plt.show()

@@ -69,6 +69,7 @@ for i in range(pos_ref.shape[0]):
 
 model = ControllerNet(4,100)
 model.load_state_dict(torch.load('./model_controller'))
+plt.figure(1)
 
 trajectory = []
 x = []
@@ -130,7 +131,10 @@ for j in range(100):
     
     plt.plot(tmp_x,tmp_y,'b')
     plt.plot(tmp_x,tmp_y,'g.')
-plt.show()
+plt.title('x vs y')
+plt.xlabel('x')
+plt.ylabel('y')
+# plt.show()
 
 x_tensor = torch.FloatTensor(x)
 y_tensor = torch.FloatTensor(y)
@@ -146,7 +150,7 @@ descripancy = DescripancyNet(3)
 data = torch.FloatTensor([1,1,np.pi/2])
 optimizer = torch.optim.Adam(descripancy.parameters(), lr=1e-1, weight_decay=1e-5)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.995)
-for i in range(3000):
+for i in range(5000):
     df = descripancy(data)
     kx = df[0]
     lx = df[1]
@@ -167,7 +171,7 @@ for i in range(3000):
     error_ly = torch.relu(ly)
     error_ltheta = torch.relu(ltheta)
 
-    loss_constraint = error_x+error_y+error_theta+error_lx+error_ly+error_ltheta
+    loss_constraint = error_x+error_y+error_theta*100+error_lx+error_ly+error_ltheta
     loss_minimize = beta_x.mean()+beta_y.mean()+beta_theta.mean()
     loss = loss_constraint*10000+loss_minimize
     if i%10 == 0:
@@ -178,12 +182,13 @@ for i in range(3000):
     scheduler.step()
 
 df = descripancy(data)
-kx = df[0].data
-lx = df[1].data
-ky = df[2].data
-ly = df[3].data
-ktheta = df[4].data
-ltheta = df[5].data
+kx = df[0].item()
+lx = df[1].item()
+ky = df[2].item()
+ly = df[3].item()
+ktheta = df[4].item()
+ltheta = df[5].item()
+print("kx",kx,"lx",lx,"ky",ky,"ly",ly,"ktheta",ktheta,"ltheta",ltheta)
 
 x_upper = []
 x_lower = []
@@ -204,20 +209,35 @@ for i in range(len(ref)):
 
     theta_upper.append(ref[i][1]+ktheta*np.exp(ltheta*t))
     theta_lower.append(ref[i][1]-ktheta*np.exp(ltheta*t))
-    
+
+plt.figure(2)
+plt.figure(3)
+plt.figure(4)
+
+plt.figure(2)
 plt.plot(time_desc,x_upper,'r')
 plt.plot(time_desc,x_lower,'r')
 plt.plot(time,x,'b.')
-plt.show()
+plt.title('t vs x')
+plt.xlabel('time')
+plt.ylabel('x value')
 
+plt.figure(3)
 plt.plot(time_desc,y_upper,'r')
 plt.plot(time_desc,y_lower,'r')
 plt.plot(time,y,'b.')
-plt.show()
+plt.title('t vs y')
+plt.xlabel('time')
+plt.ylabel('y value')
 
+plt.figure(4)
 plt.plot(time_desc,theta_upper,'r')
 plt.plot(time_desc,theta_lower,'r')
 plt.plot(time,theta,'b.')
+plt.title('t vs theta')
+plt.xlabel('time')
+plt.ylabel('theta value')
+
 plt.show()
 
 # error_x_counter_tensor = torch.zeros((0,1))

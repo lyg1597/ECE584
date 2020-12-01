@@ -33,8 +33,8 @@ def func1(t,vars,args):
 
     if vr > 30:
         vr = 30
-    elif vr < -30:
-        vr = -30
+    elif vr < -0:
+        vr = -0
 
     if delta > np.pi/4: 
         delta = np.pi/4
@@ -54,13 +54,16 @@ for i in range(pos_ref.shape[0]):
     ref.append([pos_ref[i],0,0])
     eref.append([0,0,i*0.01])
 
-model = TwoLayerNet(3,100)
+model = TwoLayerNet(4,100)
 model.load_state_dict(torch.load('./model_controller'))
 
-for i in range(1000):
-    x_init = np.random.uniform(-1-0.01,1-0.01)
-    y_init = np.random.uniform(-1,1)
-    theta_init = np.random.uniform(-np.pi/2,np.pi/2)
+for i in range(400):
+    # x_init = np.random.uniform(-0.3-0.05,0.3-0.05)
+    # y_init = np.random.uniform(-0.3,0.3)
+    # theta_init = np.random.uniform(np.pi/2,3*np.pi/2)
+    x_init = -0.1-0.05+0.01*(i%20)
+    y_init = -0.1+0.01*int(i/20)
+    theta_init = 0
 
     trajectory = [[0,x_init,y_init,theta_init]]
     r = ode(func1)
@@ -68,9 +71,11 @@ for i in range(1000):
 
     error_x = 0-x_init
     error_y = 0-y_init
-    error_theta = (0-theta_init)%(np.pi*2)
+    error_theta = (np.pi-theta_init)%(np.pi*2)
+    error_theta_sin = np.sin(error_theta)
+    error_theta_cos = np.cos(error_theta)
 
-    data = torch.FloatTensor([error_x,error_y,error_theta])
+    data = torch.FloatTensor([error_x,error_y,error_theta_sin, error_theta_cos])
     u = model(data)
     vr = u[0].item()
     delta = u[1].item()
@@ -90,7 +95,10 @@ for i in range(1000):
     x = val[0]
     y = val[1]
 
-    plt.plot([x_init,x],[y_init,y],'b')
+    if vr>=0:
+        plt.plot([x_init,x],[y_init,y],'b')
+    else:
+        plt.plot([x_init,x],[y_init,y],'c')
     plt.plot(x_init,y_init,'g.')
     plt.plot(x,y,'r.')
 

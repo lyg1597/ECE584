@@ -53,10 +53,10 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python: New Controller Symmetry",
+            "name": "Python: New Controller Rotate",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/3_Research/test_4_10/nn_new_controller_symmetry.py",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_new_controller_rotate.py",
             "cwd": "D:/1_Study/3_Research/test_4_10",
             "console": "integratedTerminal"
         },
@@ -69,11 +69,35 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python: Test Controller Reverse",
+            "name": "Python: Test Controller 9/7",
             "type": "python",
             "request": "launch",
-            "program": "D:/1_Study/3_Research/test_4_10/nn_test_controller_reverse.py",
+            "program": "D:/1_Study/3_Research/test_9_7/nn_test_controller.py",
+            "cwd": "D:/1_Study/3_Research/test_9_7/",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Controller Understand",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_net_understand.py",
             "cwd": "D:/1_Study/3_Research/test_4_10/",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Symmetry Check",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_4_10/nn_symmetry_check2.py",
+            "cwd": "D:/1_Study/3_Research/test_4_10/",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Net Export",
+            "type": "python",
+            "request": "launch",
+            "program": "D:/1_Study/3_Research/test_9_7/export_weight.py",
+            "cwd": "D:/1_Study/3_Research/test_9_7/",
             "console": "integratedTerminal"
         }
     ]

@@ -23,7 +23,7 @@ class TwoLayerNet(torch.nn.Module):
 Lr = 2
 Lf = 2
 dt = 0.01
-n_sample = 3000
+n_sample = 8000
 n_counter = 50
 
 def func1(t,vars,args):
@@ -33,15 +33,15 @@ def func1(t,vars,args):
     vr = args[0]
     delta = args[1]
 
-    if vr > 30:
-        vr = 30
+    if vr > 100:
+        vr = 100
     elif vr < -0:
         vr = -0
 
-    if delta > np.pi/4: 
-        delta = np.pi/4
-    elif delta < -np.pi/4:
-        delta = -np.pi/4
+    if delta > np.pi/3: 
+        delta = np.pi/3
+    elif delta < -np.pi/3:
+        delta = -np.pi/3
 
     beta = np.arctan(Lr/(Lr+Lf) * np.sin(delta)/np.cos(delta))
     dx = vr*np.cos(curr_theta+beta)
@@ -50,12 +50,14 @@ def func1(t,vars,args):
     return [dx,dy,dtheta]
 
 def Df(t):
-    dx = 2*np.exp(-0.8*t)
-    dy = 3*np.exp(-0.5*t)
+    # dx = 2*np.exp(-0.8*t)
+    # dy = 3*np.exp(-0.5*t)
+    dx = 2
+    dy = 3
     dtheta = np.pi/2
     return dx,dy,dtheta
 
-v_ref = 0.05
+v_ref = 0.5
 pos_ref = np.arange(-15,0.01,v_ref)
 ref = []
 eref = []
@@ -150,11 +152,14 @@ data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-1, weight_decay=1e-5)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.995)
 
+epoch_list = []
+loss_list = []
+
 for j in range(0,1):
     for i in range(0,5000):
         control_tensor = model(data)
-        vr = torch.clamp(control_tensor[:,0],-0,30)
-        delta = torch.clamp(control_tensor[:,1],-np.pi/4,np.pi/4)
+        vr = torch.clamp(control_tensor[:,0],0,100)
+        delta = torch.clamp(control_tensor[:,1],-np.pi/3,np.pi/3)
 
         delta = torch.atan(Lr/(Lr+Lf)*torch.sin(delta)/torch.cos(delta))
         new_x_tensor = x_tensor+0.01*vr*torch.cos(theta_tensor+delta)
@@ -168,8 +173,9 @@ for j in range(0,1):
         # error_theta = (torch.sin(new_theta_tensor) - torch.sin(ref_theta_tensor))**2
         error_theta = (torch.sin(new_theta_tensor-ref_theta_tensor))**2
         error_over = (torch.sign(new_x_tensor-ref_x_tensor)*torch.sign(x_tensor-ref_x_tensor)-1)**2
+        error_constraint = torch.relu(torch.sign(-data[:,1]*delta))
 
-        error = error_pos+error_theta*1.0
+        error = error_pos+error_theta*0.0
         # error = error_theta*10
         # error_x = torch.abs(ref_x_tensor - new_x_tensor)
         # error_y = torch.abs(ref_y_tensor - new_y_tensor)
@@ -177,11 +183,14 @@ for j in range(0,1):
         # error = error_x+error_y+error_diff
         loss = error.mean()
         if i%10 == 0:
-            print(i,loss.item(),error_pos.mean().item(),error_theta.mean().item())
+            print(i,loss.item(),error_pos.mean().item(),error_theta.mean().item(),error_constraint.mean().item())
+
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         scheduler.step()
+        epoch_list.append(i)
+        loss_list.append(loss.item())
     
     # x_counter = torch.zeros((0,1),device = device)
     # y_counter = torch.zeros((0,1),device = device)
@@ -257,7 +266,8 @@ x_init = np.random.uniform(-16,-14)
 y_init = np.random.uniform(-1,1)
 # x_init = -15
 # y_init = 0
-theta_init = np.random.uniform(-np.pi/2,np.pi/2)
+# theta_init = np.random.uniform(-np.pi,np.pi)
+theta_init = 0
 
 trajectory = [[0,x_init,y_init,theta_init]]
 r = ode(func1)
@@ -312,4 +322,10 @@ theta_end = new_theta_tensor.tolist()
 plt.plot(sample_x,sample_y,'b.')
 
 plt.plot(0,0,'y.')
+plt.show()
+
+plt.plot(epoch_list, loss_list)
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Training Loss vs Epoch')
 plt.show()

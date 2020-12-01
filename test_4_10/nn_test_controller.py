@@ -31,15 +31,15 @@ def func1(t,vars,args):
     vr = args[0]
     delta = args[1]
 
-    if vr > 30:
-        vr = 30
-    elif vr < -30:
-        vr = -30
+    if vr > 100:
+        vr = 100
+    elif vr < -0:
+        vr = -0
 
-    if delta > np.pi/4: 
-        delta = np.pi/4
-    elif delta < -np.pi/4:
-        delta = -np.pi/4
+    if delta > np.pi/3: 
+        delta = np.pi/3
+    elif delta < -np.pi/3:
+        delta = -np.pi/3
 
     beta = np.arctan(Lr/(Lr+Lf) * np.sin(delta)/np.cos(delta))
     dx = vr*np.cos(curr_theta+beta)
@@ -53,7 +53,7 @@ def Df(t):
     dtheta = np.pi
     return dx,dy,dtheta
 
-pos_ref = np.arange(-15,0.01,0.05)
+pos_ref = np.arange(-15,0.01,0.5)
 ref = []
 eref = []
 for i in range(pos_ref.shape[0]):
@@ -80,12 +80,12 @@ x_init = 0
 y_init = 0
 theta_init = 0
 for i in range(30):
-    x_init = np.random.uniform(-15.1,-14.9)
-    y_init = np.random.uniform(-0.1,0.1)
+    x_init = np.random.uniform(-16,-14)
+    y_init = np.random.uniform(-1,1)
     # x_init = -15
     # y_init = 0
     # theta_init = 0
-    theta_init = np.random.uniform(-np.pi,np.pi)
+    theta_init = np.random.uniform(-np.pi/2,np.pi/2)
     print("initial",x_init,y_init,theta_init*180/np.pi)
 
     trajectory = [[0,x_init,y_init,theta_init]]
